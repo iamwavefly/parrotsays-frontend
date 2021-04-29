@@ -102,11 +102,11 @@ class LiveStream extends Component {
         <div className="container">
           <Header />
           <AttendeeFrame />
-          {/* <Stream
+          <Stream
             channel={this.state.channel}
             username={this.state.username}
             role={this.state.role}
-          /> */}
+          />
           <Chat handleSendMsg={this.handleSendMsg} msgs={this.state.msg} />
         </div>
       </div>
