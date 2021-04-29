@@ -9,7 +9,7 @@ class Login extends Component {
     this.state = {
       streamName: '',
       username: '',
-      password: '',
+      role: '',
       formCompleted: false,
     };
     this.handleOnchange = this.handleOnchange.bind(this);
@@ -20,17 +20,13 @@ class Login extends Component {
     this.setState({
       [e.target.name]: e.target.value,
     });
-    console.log(
-      this.state.streamName,
-      this.state.username,
-      this.state.password
-    );
+    console.log(this.state.streamName, this.state.username, this.state.role);
   }
   checkFields() {
     if (
       this.state.streamName &&
       this.state.username &&
-      this.state.password === null
+      this.state.role === null
     ) {
       return true;
     } else {
@@ -68,14 +64,14 @@ class Login extends Component {
           />
           <input
             type="text"
-            placeholder="Enter Password"
-            name="password"
-            value={this.state.password}
+            placeholder="Enter Role"
+            name="role"
+            value={this.state.role}
             onChange={this.handleOnchange}
           />
           {this.state.streamName === '' ||
           this.state.username === '' ||
-          this.state.password === '' ? (
+          this.state.role === '' ? (
             <input name="submitBtn" disabled type="submit" value="Go Live" />
           ) : (
             <input name="submitBtn" type="submit" value="Go Live" />

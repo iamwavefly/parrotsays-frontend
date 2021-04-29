@@ -13,7 +13,10 @@ import '../../../styles/userframe.css';
 export default class UserFrame extends Component {
   constructor(props) {
     super(props);
-    console.log(this.props);
+    this.state = {};
+  }
+  componentDidMount() {
+    console.log(this.props, '----------------');
   }
   handleChat(e) {
     e.preventDefault();
@@ -21,9 +24,7 @@ export default class UserFrame extends Component {
   render() {
     return (
       <div className="frameContainer">
-        <div ref={this.container} className="frame" id="local-player">
-          Frame
-        </div>
+        <div className="frame" id="local-player"></div>
         <Fade up>
           <div className="controls">
             <div className="audioControl">

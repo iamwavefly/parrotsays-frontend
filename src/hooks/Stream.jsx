@@ -11,118 +11,132 @@ export default class Stream extends Component {
       videoTrack: null,
       audioTrack: null,
       appid: '306d86f1ec2644c3affab320daef132c',
-      token:
-        '006306d86f1ec2644c3affab320daef132cIAB5z9vp3I8A+aAkfwZEySPVBhQ4RODJKYrlKfg1IM18wMW5sgcAAAAAEAALtir+q1aLYAEAAQCnVotg',
-      channel: 'testboy',
-      role: 'host',
+      token: '',
+      channel: this.props.channel,
+      role: this.props.role,
       uid: '',
       remoteUsers: {},
       isActive: false,
+      videoTrackEnabled: true,
+      audioTrackEnabled: true,
     };
   }
-  client = AgoraRTC.createClient({ mode: 'live', codec: 'vp8' });
-  client = AgoraRTC.createClient({ mode: 'live', codec: 'vp8' });
 
   async componentDidMount() {
-    let state = this.state;
-    // if (this.props.channel) {
-    //   await Axios.post('http://localhost:4000/rtctoken1', {
-    //     channel: this.props.channel,
-    //     isPublisher: true,
-    //   }).then((res) =>
-    //     this.setState({ token: res.data.token, uid: res.data.uid })
-    //   );
-    // } else {
-    //   console.log('no username');
-    // }
-    // if (this.state.token) {
-    // }
-    // create Agora client
-    this.client.setClientRole(this.state.role);
-
-    if (this.state.role === 'audience') {
-      // add event listener to play remote tracks when remote user publishs.
-      this.client.on('user-published', handleUserPublished);
-      this.client.on('user-unpublished', handleUserUnpublished);
+    if (this.props.channel) {
+      await Axios.post('http://localhost:4000/rtctoken', {
+        channel: this.props.channel,
+        isPublisher: true,
+      }).then((res) =>
+        this.setState({ token: res.data.token, uid: res.data.uid })
+      );
+      console.log(this.state.token);
+    } else {
+      console.log('no username');
     }
+    // ----------AGORA RTC INIT-----------
+    if (this.state.token) {
+      const client = AgoraRTC.createClient({ mode: 'live', codec: 'vp8' });
 
-    // join the channel
-    this.state.uid = await this.client.join(
-      this.state.appid,
-      this.state.channel,
-      this.state.token || null
-    );
+      var rtc = {
+        // For the local client.
+        client: null,
+        // For the local audio and video tracks.
+        localAudioTrack: null,
+        localVideoTrack: null,
+      };
+      var options = {
+        // Pass your app ID here.
+        appId: this.state.appid,
+        // Set the channel name.
+        channel: this.state.channel,
+        // Pass a token if your project enables the App Certificate.
+        token: this.state.token,
+        // Set the user role in the channel.
+        role: this.state.role,
+      };
+      async function startBasicCall() {
+        rtc.client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' });
+        // Set role as "host" or "audience".
+        client.setClientRole(options.role);
+        const uid = await rtc.client.join(
+          options.appId,
+          options.channel,
+          options.token,
+          null
+        );
+        // Create an audio track from the audio sampled by a microphone.
+        rtc.localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+        // Create a video track from the video captured by a camera.
+        rtc.localVideoTrack = await AgoraRTC.createCameraVideoTrack();
+        // Publish the local audio and video tracks to the channel.
+        await rtc.client.publish([rtc.localAudioTrack, rtc.localVideoTrack]);
 
-    if (this.state.role === 'host') {
-      this.setState({ isActive: true });
-      // create local audio and video tracks
-      this.state.audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
-      this.state.videoTrack = await AgoraRTC.createCameraVideoTrack();
-      // play local video track
-      this.state.videoTrack.play('local-player');
-      // $('#local-player-name').text(`localTrack(${options.uid})`);
-      // publish local tracks to channel
-      await this.client.publish(this.state.videoTrack, this.state.audioTrack);
-      console.log('publish success');
-    }
+        console.log('publish success!');
 
-    async function leave() {
-      // for (trackName in localTracks) {
-      //   var track = localTracks[trackName];
-      //   if (track) {
-      //     track.stop();
-      //     track.close();
-      //     localTracks[trackName] = undefined;
-      //   }
-      // }
-      // // remove remote users and player views
-      // remoteUsers = {};
-      // $('#remote-playerlist').html('');
-      // // leave the channel
-      // await client.leave();
-      // $('#local-player-name').text('');
-      // $('#host-join').attr('disabled', false);
-      // $('#audience-join').attr('disabled', false);
-      // $('#leave').attr('disabled', true);
-      // console.log('client leaves channel success');
-    }
+        rtc.client.on('user-published', async (user, mediaType) => {
+          // Subscribe to a remote user.
+          await rtc.client.subscribe(user, mediaType);
+          console.log('subscribe success');
 
-    async function subscribe(user, mediaType) {
-      const uid = user.uid;
-      // subscribe to a remote user
-      await this.client.subscribe(user, mediaType);
-      console.log('subscribe success');
-      if (mediaType === 'video') {
-        // const player = $(`
-        //   <div id="player-wrapper-${uid}">
-        //     <p class="player-name">remoteUser(${uid})</p>
-        //     <div id="player-${uid}" class="player"></div>
-        //   </div>
-        // `);
-        // $('#remote-playerlist').append(player);
-        // user.videoTrack.play(`player-${uid}`);
+          // If the subscribed track is video.
+          if (mediaType === 'video') {
+            // Get `RemoteVideoTrack` in the `user` object.
+            const remoteVideoTrack = user.videoTrack;
+            // Dynamically create a container in the form of a DIV element for playing the remote video track.
+            const playerContainer = document.createElement('div');
+            // Specify the ID of the DIV container. You can use the `uid` of the remote user.
+            playerContainer.id = user.uid.toString();
+            playerContainer.style.width = '640px';
+            playerContainer.style.height = '480px';
+            document.body.append(playerContainer);
+            let container = document.getElementById('local-player');
+            // Play the remote video track.
+            // Pass the DIV container and the SDK dynamically creates a player in the container for playing the remote video track.
+            remoteVideoTrack.play(container);
+
+            // Or just pass the ID of the DIV container.
+            // remoteVideoTrack.play(playerContainer.id);
+          }
+
+          // If the subscribed track is audio.
+          if (mediaType === 'audio') {
+            // Get `RemoteAudioTrack` in the `user` object.
+            const remoteAudioTrack = user.audioTrack;
+            // Play the audio track. No need to pass any DOM element.
+            remoteAudioTrack.play();
+          }
+        });
+        rtc.client.on('user-unpublished', (user) => {
+          // Get the dynamically created DIV container.
+          const playerContainer = document.getElementById(user.uid);
+          // Destroy the container.
+          playerContainer.remove();
+        });
+        async function leaveCall() {
+          // Destroy the local audio and video tracks.
+          rtc.localAudioTrack.close();
+          rtc.localVideoTrack.close();
+
+          // Traverse all remote users.
+          rtc.client.remoteUsers.forEach((user) => {
+            // Destroy the dynamically created DIV container.
+            const playerContainer = document.getElementById(user.uid);
+            playerContainer && playerContainer.remove();
+          });
+
+          // Leave the channel.
+          await rtc.client.leave();
+        }
       }
-      // if (mediaType === 'audio') {
-      //   user.audioTrack.play();
-      // }
-    }
 
-    function handleUserPublished(user, mediaType) {
-      const id = user.uid;
-      state.remoteUsers[id] = user;
-      subscribe(user, mediaType);
-    }
-
-    function handleUserUnpublished(user) {
-      const id = user.uid;
-      delete state.remoteUsers[id];
-      // $(`#player-wrapper-${id}`).remove();
+      startBasicCall();
     }
   }
   render() {
     return (
-      <div className="streamContainer" id="local-player">
-        {/* <UserFrame /> */}
+      <div className="streamContainer">
+        <UserFrame />
       </div>
     );
   }

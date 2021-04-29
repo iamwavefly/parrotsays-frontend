@@ -19,12 +19,10 @@ class LiveStream extends Component {
     this.state = {
       msg: [],
       token: null,
-      username: params.get('username'),
-      channel: params.get('streamName'),
-      videoPlayer: '',
-      isActive: null,
+      username: params?.get('username'),
+      channel: params?.get('channel'),
+      role: params?.get('role'),
     };
-    console.log('props', this.props);
     this.initChat = this.initChat.bind(this);
     this.handleSendMsg = this.handleSendMsg.bind(this);
   }
@@ -32,8 +30,8 @@ class LiveStream extends Component {
     enableLogUpload: false,
   });
   params = new URLSearchParams(window.location.search);
-  channel = this.client.createChannel(this.params.get('streamName'));
-  async initChat(token) {
+  channel = this.client.createChannel(this.params?.get('channel'));
+  async initChat() {
     const getChannelMsg = (msg, user) => {
       let newMsg = { sender: user, msg: msg };
       this.setState({ msg: [...this.state.msg, newMsg] });
@@ -49,17 +47,17 @@ class LiveStream extends Component {
     });
     this.channel.on('ChannelMessage', function (message, memberId) {
       console.log(message + 'from' + memberId);
-      token && getChannelMsg(message.text, memberId);
+      getChannelMsg(message.text, memberId);
     });
     // Display channel member stats
     this.channel.on('MemberJoined', function (memberId) {
       let msg = memberId + ' joined the channel';
-      token && getChannelMsg(msg, 'ParrotSays bot');
+      getChannelMsg(msg, 'ParrotSays bot');
     });
     // Display channel member stats
     this.channel.on('MemberLeft', function (memberId) {
       let msg = memberId + ' left the channel';
-      token && getChannelMsg(msg, 'ParrotSays bot');
+      getChannelMsg(msg, 'ParrotSays bot');
     });
     // Button behavior
     // Buttons
@@ -104,7 +102,11 @@ class LiveStream extends Component {
         <div className="container">
           <Header />
           <AttendeeFrame />
-          <Stream />;
+          <Stream
+            channel={this.state.channel}
+            username={this.state.username}
+            role={this.state.role}
+          />
           <Chat handleSendMsg={this.handleSendMsg} msgs={this.state.msg} />
         </div>
       </div>
