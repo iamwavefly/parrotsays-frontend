@@ -21,6 +21,8 @@ class LiveStream extends Component {
       token: null,
       username: params.get('username'),
       channel: params.get('streamName'),
+      videoPlayer: '',
+      isActive: null,
     };
     console.log('props', this.props);
     this.initChat = this.initChat.bind(this);
@@ -99,14 +101,10 @@ class LiveStream extends Component {
   render() {
     return (
       <div>
-        {/* <Stream user={this.state.username} channel={this.state.channel}/>; */}
         <div className="container">
           <Header />
           <AttendeeFrame />
-          <UserFrame
-            videoTrack={this.state.videoTrack}
-            audioTrack={this.state.audioTrack}
-          />
+          <Stream />;
           <Chat handleSendMsg={this.handleSendMsg} msgs={this.state.msg} />
         </div>
       </div>

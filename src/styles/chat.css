@@ -1,4 +1,6 @@
 .chatContainer{
+  grid-column: 3 / -1;
+  grid-row: 2 / -1;
   width: 100%;
   height: auto;
   min-height: 100%;

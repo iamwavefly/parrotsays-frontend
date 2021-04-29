@@ -11,32 +11,17 @@ import {
 import '../../../styles/userframe.css';
 
 export default class UserFrame extends Component {
-  playVideo() {
-    const container = useRef;
-    if (!container.current) return;
-    this.props.videoTrack?.play(container.current);
-    return () => {
-      this.props.videoTrack?.stop();
-    };
-  }
-  playAudio() {
-    this.props.audioTrack?.play();
-    return () => {
-      this.props.audioTrack?.stop();
-    };
+  constructor(props) {
+    super(props);
+    console.log(this.props);
   }
   handleChat(e) {
     e.preventDefault();
   }
-  componentDidMount() {
-    this.playVideo();
-    this.playAudio();
-  }
-
   render() {
     return (
       <div className="frameContainer">
-        <div ref={this.container} className="frame">
+        <div ref={this.container} className="frame" id="local-player">
           Frame
         </div>
         <Fade up>
