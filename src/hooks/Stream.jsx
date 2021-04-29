@@ -8,13 +8,16 @@ export default class Stream extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      videoTrack: null,
-      audioTrack: null,
+      client: null,
+      // For the local audio and video tracks.
+      localAudioTrack: null,
+      localVideoTrack: null,
       appid: '306d86f1ec2644c3affab320daef132c',
       token: '',
       channel: this.props.channel,
       role: this.props.role,
       uid: '',
+      username: this.props.username,
       remoteUsers: {},
       isActive: false,
       videoTrackEnabled: true,
@@ -40,10 +43,6 @@ export default class Stream extends Component {
 
       var rtc = {
         // For the local client.
-        client: null,
-        // For the local audio and video tracks.
-        localAudioTrack: null,
-        localVideoTrack: null,
       };
       var options = {
         // Pass your app ID here.
@@ -55,33 +54,40 @@ export default class Stream extends Component {
         // Set the user role in the channel.
         role: this.state.role,
       };
-      async function startBasicCall() {
-        rtc.client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' });
+      const startBasicCall = async () => {
+        this.state.client = AgoraRTC.createClient({
+          mode: 'rtc',
+          codec: 'vp8',
+        });
         // Set role as "host" or "audience".
-        client.setClientRole(options.role);
-        const uid = await rtc.client.join(
-          options.appId,
-          options.channel,
-          options.token,
+        client.setClientRole(this.state.role);
+        this.state.uid = await this.state.client.join(
+          this.state.appid,
+          this.state.username,
+          this.state.token,
           null
         );
         // Create an audio track from the audio sampled by a microphone.
-        rtc.localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+        this.state.localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
         // Create a video track from the video captured by a camera.
-        rtc.localVideoTrack = await AgoraRTC.createCameraVideoTrack();
+        this.state.localVideoTrack = await AgoraRTC.createCameraVideoTrack();
         // Publish the local audio and video tracks to the channel.
-        await rtc.client.publish([rtc.localAudioTrack, rtc.localVideoTrack]);
+        await this.state.client.publish([
+          this.state.localAudioTrack,
+          this.state.localVideoTrack,
+        ]);
 
         console.log('publish success!');
 
-        rtc.client.on('user-published', async (user, mediaType) => {
+        this.state.client.on('user-published', async (user, mediaType) => {
           // Subscribe to a remote user.
-          await rtc.client.subscribe(user, mediaType);
+          await this.state.client.subscribe(user, mediaType);
           console.log('subscribe success');
 
           // If the subscribed track is video.
           if (mediaType === 'video') {
             // Get `RemoteVideoTrack` in the `user` object.
+            const container = document.getElementById('local-player');
             const remoteVideoTrack = user.videoTrack;
             // Dynamically create a container in the form of a DIV element for playing the remote video track.
             const playerContainer = document.createElement('div');
@@ -89,11 +95,10 @@ export default class Stream extends Component {
             playerContainer.id = user.uid.toString();
             playerContainer.style.width = '640px';
             playerContainer.style.height = '480px';
-            document.body.append(playerContainer);
-            let container = document.getElementById('local-player');
+            container.appendChild(playerContainer);
             // Play the remote video track.
             // Pass the DIV container and the SDK dynamically creates a player in the container for playing the remote video track.
-            remoteVideoTrack.play(container);
+            remoteVideoTrack.play(playerContainer);
 
             // Or just pass the ID of the DIV container.
             // remoteVideoTrack.play(playerContainer.id);
@@ -107,7 +112,7 @@ export default class Stream extends Component {
             remoteAudioTrack.play();
           }
         });
-        rtc.client.on('user-unpublished', (user) => {
+        this.state.client.on('user-unpublished', (user) => {
           // Get the dynamically created DIV container.
           const playerContainer = document.getElementById(user.uid);
           // Destroy the container.
@@ -128,7 +133,7 @@ export default class Stream extends Component {
           // Leave the channel.
           await rtc.client.leave();
         }
-      }
+      };
 
       startBasicCall();
     }
