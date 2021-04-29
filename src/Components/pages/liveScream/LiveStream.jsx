@@ -20,7 +20,7 @@ class LiveStream extends Component {
       msg: [],
       token: null,
       username: params?.get('username'),
-      channel: params?.get('channel'),
+      channel: params?.get('user_id'),
       role: params?.get('role'),
     };
     this.initChat = this.initChat.bind(this);
@@ -30,7 +30,7 @@ class LiveStream extends Component {
     enableLogUpload: false,
   });
   params = new URLSearchParams(window.location.search);
-  channel = this.client.createChannel(this.params?.get('channel'));
+  channel = this.client.createChannel(this.params?.get('user_id'));
   async initChat() {
     const getChannelMsg = (msg, user) => {
       let newMsg = { sender: user, msg: msg };
