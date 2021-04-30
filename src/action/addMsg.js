@@ -4,3 +4,9 @@ export const addMsg = (payload) => {
     payload,
   };
 };
+export const addStream = (payload) => {
+  return {
+    type: 'ADD_STREAM',
+    payload,
+  };
+};

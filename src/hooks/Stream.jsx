@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import AgoraRTC from 'agora-rtc-sdk-ng';
+import AgoraRTC from 'agora-rtc-sdk';
 import Axios from 'axios';
 import UserFrame from '../Components/pages/liveScream/UserFrame';
 import '../styles/stream.css';
@@ -39,103 +39,236 @@ export default class Stream extends Component {
     }
     // ----------AGORA RTC INIT-----------
     if (this.state.token) {
-      const client = AgoraRTC.createClient({ mode: 'live', codec: 'vp8' });
+      let localVideoPlayer = document.getElementById('local-player');
+      let audioControl = document.getElementById('audioControl');
+      let videoControl = document.getElementById('videoControl');
+      let endStreamControl = document.getElementById('endStreamControl');
+      /**
+       * Agora Broadcast Client
+       */
 
-      var rtc = {
-        // For the local client.
+      // Defaults
+      let client = AgoraRTC.createClient({ mode: 'live', codec: 'vp8' });
+      let mainStreamId;
+      let cameraVideoProfile = '720p_6';
+      let localStreams = {
+        uid: '',
+        camera: {
+          camId: '',
+          micId: '',
+          stream: {},
+        },
       };
-      var options = {
-        // Pass your app ID here.
-        appId: this.state.appid,
-        // Set the channel name.
-        channel: this.state.channel,
-        // Pass a token if your project enables the App Certificate.
-        token: this.state.token,
-        // Set the user role in the channel.
-        role: this.state.role,
+      var devices = {
+        cameras: [],
+        mics: [],
       };
-      const startBasicCall = async () => {
-        this.state.client = AgoraRTC.createClient({
-          mode: 'rtc',
-          codec: 'vp8',
-        });
-        // Set role as "host" or "audience".
-        client.setClientRole(this.state.role);
-        this.state.uid = await this.state.client.join(
-          this.state.appid,
-          this.state.username,
-          this.state.token,
-          null
-        );
-        // Create an audio track from the audio sampled by a microphone.
-        this.state.localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
-        // Create a video track from the video captured by a camera.
-        this.state.localVideoTrack = await AgoraRTC.createCameraVideoTrack();
-        // Publish the local audio and video tracks to the channel.
-        await this.state.client.publish([
-          this.state.localAudioTrack,
-          this.state.localVideoTrack,
-        ]);
-
-        console.log('publish success!');
-
-        this.state.client.on('user-published', async (user, mediaType) => {
-          // Subscribe to a remote user.
-          await this.state.client.subscribe(user, mediaType);
-          console.log('subscribe success');
-
-          // If the subscribed track is video.
-          if (mediaType === 'video') {
-            // Get `RemoteVideoTrack` in the `user` object.
-            const container = document.getElementById('local-player');
-            const remoteVideoTrack = user.videoTrack;
-            // Dynamically create a container in the form of a DIV element for playing the remote video track.
-            const playerContainer = document.createElement('div');
-            // Specify the ID of the DIV container. You can use the `uid` of the remote user.
-            playerContainer.id = user.uid.toString();
-            playerContainer.style.width = '640px';
-            playerContainer.style.height = '480px';
-            container.appendChild(playerContainer);
-            // Play the remote video track.
-            // Pass the DIV container and the SDK dynamically creates a player in the container for playing the remote video track.
-            remoteVideoTrack.play(playerContainer);
-
-            // Or just pass the ID of the DIV container.
-            // remoteVideoTrack.play(playerContainer.id);
-          }
-
-          // If the subscribed track is audio.
-          if (mediaType === 'audio') {
-            // Get `RemoteAudioTrack` in the `user` object.
-            const remoteAudioTrack = user.audioTrack;
-            // Play the audio track. No need to pass any DOM element.
-            remoteAudioTrack.play();
-          }
-        });
-        this.state.client.on('user-unpublished', (user) => {
-          // Get the dynamically created DIV container.
-          const playerContainer = document.getElementById(user.uid);
-          // Destroy the container.
-          playerContainer.remove();
-        });
-        async function leaveCall() {
-          // Destroy the local audio and video tracks.
-          rtc.localAudioTrack.close();
-          rtc.localVideoTrack.close();
-
-          // Traverse all remote users.
-          rtc.client.remoteUsers.forEach((user) => {
-            // Destroy the dynamically created DIV container.
-            const playerContainer = document.getElementById(user.uid);
-            playerContainer && playerContainer.remove();
-          });
-
-          // Leave the channel.
-          await rtc.client.leave();
+      // Initialise Agora CDN
+      client.init(
+        this.state.appid,
+        () => {
+          console.log('initialized');
+        },
+        function (err) {}
+      );
+      // Connect New People
+      client.on('stream-added', function (evt) {
+        var stream = evt.stream;
+        client.subscribe(stream, function (err) {});
+      });
+      client.on('stream-subscribed', function (evt) {
+        var remoteStream = evt.stream;
+        var remoteId = remoteStream.getId();
+        console.log('Subscribe remote stream successfully: ' + remoteId);
+        if (localVideoPlayer.innerHTML === '') {
+          mainStreamId = remoteId;
+          remoteStream.play('local-player');
+        } else {
+          // addRemoteStreamMiniView(remoteStream);
         }
+      });
+
+      // Stop Stream
+      client.on('stream-removed', function (evt) {
+        var stream = evt.stream;
+        stream.stop();
+        stream.close();
+      });
+
+      // Join Channel
+      const joinChannel = (channelName) => {
+        // disableChannelBtn();
+        let token = this.state.token;
+        let userID = null;
+        // It's a Host
+        client.setClientRole(
+          this.state.role,
+          function () {},
+          function (e) {}
+        );
+        // Track Stream
+        client.join(
+          token,
+          channelName,
+          userID,
+          function (uid) {
+            createCameraStream(uid, {});
+            localStreams.uid = uid;
+          },
+          function (err) {}
+        );
       };
 
-      startBasicCall();
+      // Frontal Screen : Camera
+      function createCameraStream(uid, deviceIds) {
+        var localStream = AgoraRTC.createStream({
+          streamID: uid,
+          audio: true,
+          video: true,
+          screen: false,
+        });
+        localStream.setVideoProfile(cameraVideoProfile);
+        localStream.on('accessAllowed', function () {
+          if (devices.cameras.length === 0 && devices.mics.length === 0) {
+            getCameraDevices();
+            getMicDevices();
+          }
+        });
+        // Show Host How They Look
+        localStream.init(
+          function () {
+            localStream.play('local-player');
+            // if (Object.keys(localStreams.camera.stream).length === 0) {
+            // enableUiControls(localStream);
+            // } else {
+            // Reset Action Buttons
+            // $('#mic-btn').prop('disabled', false);
+            // $('#video-btn').prop('disabled', false);
+            // $('#exit-btn').prop('disabled', false);
+            // $('#mic-dropdown').prop('disabled', false);
+            // $('#cam-dropdown').prop('disabled', false);
+            // }
+            client.publish(localStream, function (err) {});
+            localStreams.camera.stream = localStream;
+          },
+          function (err) {}
+        );
+      }
+      function changeStreamSource(deviceIndex, deviceType) {
+        console.log('Switching stream sources for: ' + deviceType);
+        var deviceId;
+        var existingStream = false;
+
+        if (deviceType === 'video') {
+          deviceId = devices.cameras[deviceIndex].deviceId;
+        }
+
+        if (deviceType === 'audio') {
+          deviceId = devices.mics[deviceIndex].deviceId;
+        }
+
+        localStreams.camera.stream.switchDevice(
+          deviceType,
+          deviceId,
+          function () {
+            console.log(
+              'successfully switched to new device with id: ' +
+                JSON.stringify(deviceId)
+            );
+            // set the active device ids
+            if (deviceType === 'audio') {
+              localStreams.camera.micId = deviceId;
+            } else if (deviceType === 'video') {
+              localStreams.camera.camId = deviceId;
+            } else {
+              console.log('unable to determine deviceType: ' + deviceType);
+            }
+          },
+          function () {
+            console.log(
+              'failed to switch to new device with id: ' +
+                JSON.stringify(deviceId)
+            );
+          }
+        );
+      }
+
+      // Get Device Info
+      // Video Devices
+      function getCameraDevices() {
+        client.getCameras(function (cameras) {
+          devices.cameras = cameras;
+          cameras.forEach(function (camera, i) {
+            // var name = camera.label.split('(')[0];
+            // var optionId = 'camera_' + i;
+            var deviceId = camera.deviceId;
+            if (i === 0 && localStreams.camera.camId === '') {
+              localStreams.camera.camId = deviceId;
+            }
+            // $('#camera-list').append(
+            //   '<a class="dropdown-item" id="' + optionId + '">' + name + '</a>'
+            // );
+          });
+          // $('#camera-list a').click(function (event) {
+          //   var index = event.target.id.split('_')[1];
+          //   changeStreamSource(index, 'video');
+          // });
+        });
+      }
+      // Audio Devices
+      function getMicDevices() {
+        client.getRecordingDevices(function (mics) {
+          devices.mics = mics;
+          mics.forEach(function (mic, i) {
+            var name = mic.label.split('(')[0];
+            var optionId = 'mic_' + i;
+            var deviceId = mic.deviceId;
+            if (i === 0 && localStreams.camera.micId === '') {
+              localStreams.camera.micId = deviceId;
+            }
+            if (name.split('Default - ')[1] !== undefined) {
+              name = '[Default Device]';
+            }
+            // $('#mic-list').append(
+            //   '<a class="dropdown-item" id="' + optionId + '">' + name + '</a>'
+            // );
+          });
+          // $('#mic-list a').click(function (event) {
+          //   var index = event.target.id.split('_')[1];
+          //   changeStreamSource(index, 'audio');
+          // });
+        });
+      }
+      audioControl.addEventListener('click', () => {
+        if (this.state.audioTrackEnabled) {
+          console.log('audio mute');
+          localStreams.camera.stream.muteAudio();
+          this.setState({ audioTrackEnabled: false });
+        } else {
+          this.setState({ audioTrackEnabled: true });
+          localStreams.camera.stream.unmuteAudio();
+        }
+      });
+      videoControl.addEventListener('click', () => {
+        if (this.state.videoTrackEnabled) {
+          localStreams.camera.stream.muteVideo();
+          this.setState({ videoTrackEnabled: false });
+          console.log('video mute');
+        } else {
+          this.setState({ videoTrackEnabled: true });
+          localStreams.camera.stream.unmuteVideo();
+        }
+      });
+      endStreamControl.addEventListener('click', async () => {
+        await client.leave(() => {
+          localStreams.camera.stream.stop();
+          localStreams.camera.stream.close();
+          client.unpublish(localStreams.camera.stream);
+          window.location = 'https://parrotsays.com/'
+        });
+      });
+      // endStreamControl;
+      joinChannel(this.state.channel);
     }
   }
   render() {

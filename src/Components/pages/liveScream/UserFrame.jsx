@@ -27,11 +27,11 @@ export default class UserFrame extends Component {
         <div className="frame" id="local-player"></div>
         <Fade up>
           <div className="controls">
-            <div className="audioControl">
+            <div id="audioControl" className="audioControl">
               <MdMic className="icon audioIcon" />
               <span>Audio</span>
             </div>
-            <div className="videoControl">
+            <div id="videoControl" className="videoControl">
               <MdVideocam className="icon videoIcon" />
               <span>Video</span>
             </div>
@@ -43,7 +43,7 @@ export default class UserFrame extends Component {
               <MdForum className="icon chatIcon" />
               <span>Chat</span>
             </div>
-            <div className="endStreamControl">
+            <div id="endStreamControl" className="endStreamControl">
               <MdCallEnd className="icon chatIcon" />
               <span>End</span>
             </div>
