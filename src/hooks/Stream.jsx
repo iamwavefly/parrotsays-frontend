@@ -26,7 +26,7 @@ export default class Stream extends Component {
   }
 
   async componentDidMount() {
-    if (this.props.channel) {
+    const tokenGen = async () => {
       await Axios.post('https://parrotsays-backend.herokuapp.com/rtctoken', {
         channel: this.props.channel,
         isPublisher: true,
@@ -34,6 +34,9 @@ export default class Stream extends Component {
         this.setState({ token: res.data.token, uid: res.data.uid })
       );
       console.log(this.state.token);
+    };
+    if (this.props.channel) {
+      tokenGen();
     } else {
       console.log('no username');
     }
@@ -155,10 +158,12 @@ export default class Stream extends Component {
         );
       }
       client.on('onTokenPrivilegeWillExpire', () => {
+        tokenGen();
         //After requesting a new token
         client.renewToken(this.state.token);
       });
       client.on('onTokenPrivilegeDidExpire', () => {
+        tokenGen();
         //After requesting a new token
         client.renewToken(this.state.token);
       });
