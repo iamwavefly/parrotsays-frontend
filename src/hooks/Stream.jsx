@@ -154,6 +154,14 @@ export default class Stream extends Component {
           function (err) {}
         );
       }
+      client.on('onTokenPrivilegeWillExpire', () => {
+        //After requesting a new token
+        client.renewToken(this.state.token);
+      });
+      client.on('onTokenPrivilegeDidExpire', () => {
+        //After requesting a new token
+        client.renewToken(this.state.token);
+      });
       function changeStreamSource(deviceIndex, deviceType) {
         console.log('Switching stream sources for: ' + deviceType);
         var deviceId;
@@ -264,7 +272,7 @@ export default class Stream extends Component {
           localStreams.camera.stream.stop();
           localStreams.camera.stream.close();
           client.unpublish(localStreams.camera.stream);
-          window.location = 'https://parrotsays.com/'
+          window.location = 'https://parrotsays.com/';
         });
       });
       // endStreamControl;
