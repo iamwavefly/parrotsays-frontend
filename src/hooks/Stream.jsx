@@ -158,14 +158,13 @@ export default class Stream extends Component {
         );
       }
       client.on('onTokenPrivilegeWillExpire', () => {
-        tokenGen();
         //After requesting a new token
-        client.renewToken(this.state.token);
+        client.renewToken(tokenGen());
       });
       client.on('onTokenPrivilegeDidExpire', () => {
         tokenGen();
         //After requesting a new token
-        client.renewToken(this.state.token);
+        client.renewToken(tokenGen());
       });
       function changeStreamSource(deviceIndex, deviceType) {
         console.log('Switching stream sources for: ' + deviceType);
