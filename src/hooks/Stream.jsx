@@ -27,7 +27,7 @@ export default class Stream extends Component {
 
   async componentDidMount() {
     if (this.props.channel) {
-      await Axios.post('http://localhost:4000/rtctoken', {
+      await Axios.post('https://parrotsays-backend.herokuapp.com/rtctoken', {
         channel: this.props.channel,
         isPublisher: true,
       }).then((res) =>
