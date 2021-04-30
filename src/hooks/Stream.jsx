@@ -26,7 +26,7 @@ export default class Stream extends Component {
   }
 
   async componentDidMount() {
-    const tokenGen = async () => {
+    if (this.props.channel) {
       await Axios.post('https://parrotsays-backend.herokuapp.com/rtctoken', {
         channel: this.props.channel,
         isPublisher: true,
@@ -34,9 +34,6 @@ export default class Stream extends Component {
         this.setState({ token: res.data.token, uid: res.data.uid })
       );
       console.log(this.state.token);
-    };
-    if (this.props.channel) {
-      tokenGen();
     } else {
       console.log('no username');
     }
@@ -157,15 +154,6 @@ export default class Stream extends Component {
           function (err) {}
         );
       }
-      client.on('onTokenPrivilegeWillExpire', () => {
-        //After requesting a new token
-        client.renewToken(tokenGen());
-      });
-      client.on('onTokenPrivilegeDidExpire', () => {
-        tokenGen();
-        //After requesting a new token
-        client.renewToken(tokenGen());
-      });
       function changeStreamSource(deviceIndex, deviceType) {
         console.log('Switching stream sources for: ' + deviceType);
         var deviceId;
