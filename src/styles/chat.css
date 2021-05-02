@@ -18,19 +18,23 @@
   width: auto;
   max-width: 90%;
   height: auto;
+  
 }
 .chatContainer .react-input-emoji--container{
+  box-shadow: -10px 0 10px rgba(46, 56, 72, 0.055);
   border-radius: 5px 0 0 5px !important;
 }
 .react-input-emoji--button{
+  box-shadow: 10px 0 10px rgba(46, 56, 72, 0.055);
   position: relative;
   left: -5px;
   background-color: #fff !important;
-  padding: 8px;
+  padding: 7px 10px !important;
   border-radius: 0 5px 5px 0;
 }
 .react-input-emoji--button > svg{
-  fill: var(--primary-color);
+  fill: #00A0E9;
+  color: #00A0E9;
 }
 .chatContainer > .msgHeader{
   width: 100%;

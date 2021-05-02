@@ -1,4 +1,5 @@
 import React, { Component, useRef } from 'react';
+import { FiSmile } from 'react-icons/fi';
 
 import '../../../styles/userframe.css';
 
@@ -16,7 +17,9 @@ export default class UserFrame extends Component {
   render() {
     return (
       <div className="frameContainer">
-        <div className="frame" id="local-player"></div>
+        <div className="frame" id="local-player">
+          <FiSmile className="frameIcon" />
+        </div>
       </div>
     );
   }
