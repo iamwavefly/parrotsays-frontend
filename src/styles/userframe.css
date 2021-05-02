@@ -2,71 +2,20 @@
   position: relative;
   width: 100%;
   height: 100%;
+  border-radius: 10px;
   display: grid;
-
+  overflow: hidden;
 }
 .frameContainer .frame{
   width: 100%;
   height: 100%;
-  background-image: linear-gradient(to right, #eee, #f1f1f1);
+  background-color: #EDF2F9;
 }
 .frameContainer .frame div{
-  width: 120rem;
-  height: 120rem;
+  width: 100%;
+  height: 100%;
 }
 .frameContainer .frame div video{
-  width: 120rem;
-  height: 120rem;
-}
-.frameContainer .controls{
-  display: grid;
-  place-items: center;
-  grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
-  background-color: #fff;
-  position: absolute;
-  bottom: 0;
-  left: 30%;
-  width: 40%;
-  height: 4.5rem;
-  border-radius: 20px 20px 0px 0;
-  padding: 0 1.5rem;
-  margin-bottom: 10px;
-}
-.frameContainer > .controls > div{
-  display: grid;
-  place-items: center;
-}
-.frameContainer > .controls span{
-  font-size: 14px;
-  margin-top: -8px;
-  color: rgba(46, 56, 72, 0.6);
-}
-.frameContainer > .controls .icon{
-  color: rgba(46, 56, 72, 0.8);
-  font-size: 26px;
-  cursor: pointer;
-  border-radius: 50%;
-  padding: 10px;
-}
-.frameContainer > .controls .icon:not(.endStreamControl .icon):hover{
-  background-color: rgba(46, 56, 72, 0.1);
-}
-.endStreamControl{
-  border-left: 1px solid rgba(46, 56, 72, 0.3);
-  padding-left: 1.5rem;
-}
-.endStreamControl .icon{
-  background-color: #ED455F;
-  color: #fff !important;
-  padding: 5px !important;
-  border-radius: 50%;
-  font-size: 20px !important;
-}
-.endStreamControl span{
-  position: relative;
-  top: 10px;
-}
-.mute{
-  position: relative;
-  color: var(--primary-color) !important;
+  width: 100%;
+  height: 100%;
 }

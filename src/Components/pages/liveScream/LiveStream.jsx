@@ -11,6 +11,7 @@ import Header from './Header';
 import UserFrame from './UserFrame';
 
 import '../../../styles/index.css';
+import StreamControls from './StreamControls';
 
 class LiveStream extends Component {
   constructor(props) {
@@ -108,6 +109,7 @@ class LiveStream extends Component {
             role={this.state.role}
           />
           <Chat handleSendMsg={this.handleSendMsg} msgs={this.state.msg} />
+          <StreamControls />
         </div>
       </div>
     );

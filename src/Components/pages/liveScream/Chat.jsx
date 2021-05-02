@@ -19,11 +19,15 @@ class Chat extends Component {
   }
 
   handleOnEnter(text) {
-    this.props.addNewMsg(text);
-    console.log(this.props.msgs);
-
-    this.props.handleSendMsg(this.props._msg);
-    console.log(this.props._msg);
+    if (text !== '') {
+      this.props.addNewMsg(text);
+      this.props.handleSendMsg(this.props._msg);
+      console.log(this.props._msg);
+    }
+  }
+  handleClick(e) {
+    const chatContainer = document.getElementById('chatContainer');
+    chatContainer.classList.toggle('toggleChat');
   }
 
   scrollToBottom = () => {
@@ -40,10 +44,10 @@ class Chat extends Component {
 
   render() {
     return (
-      <div className="chatContainer">
+      <div className="chatContainer" id="chatContainer">
         <div className="msgHeader">
           <h2>Chat {/*<span>{this.props.msgs.length}</span> */}</h2>
-          <FiX className="rmIcon" />
+          <FiX onClick={this.handleClick} className="rmIcon" />
         </div>
         <div className="msgContainer">
           {this.props.msgs.map((msg) => {

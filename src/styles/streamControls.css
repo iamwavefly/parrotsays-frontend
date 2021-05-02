@@ -1,0 +1,64 @@
+.controls{
+  position: relative !important;
+  grid-column: 2 / 3;
+  grid-row: 3 / -1;
+  background-color: #EDF2F9;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+}
+.controlContainer{
+  display: grid;
+  place-items: center;
+  position: relative;
+  height: 100%;
+  grid-template-columns: repeat(5, 3rem);
+  display: grid;
+  place-items: center;
+}
+.controlContainer > div{
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(46, 56, 72, 0.1);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  border-radius: 10px;
+  padding: 10px;
+}
+.controlContainer > div:hover{
+  background-color: #f1f1f1;
+}
+.controls .icon{
+  color: var(--primary-color);
+  font-size: 20px;
+  pointer-events: none;
+}
+.control{
+  position: relative;
+}
+.endStreamControl{
+
+}
+.endStreamControl .icon{
+  background-color: #ED455F;
+  color: #fff !important;
+  padding: 2px !important;
+  border-radius: 50%;
+}
+.control.mute .icon{
+  position: relative;
+  color: #ED455F !important;
+}
+.control.mute::before{
+  content: '';
+  position: absolute;
+  width: 60%;
+  border: 1px solid #ED455F;
+  transform: rotate(45deg);
+}
+.toggleChat{
+  width: 0;
+  opacity: 0;
+}

@@ -1,21 +1,36 @@
 .chatContainer{
   grid-column: 3 / -1;
-  grid-row: 2 / -1;
-  width: 100%;
+  grid-row: 1 / -1;
+  width: 18rem;
   height: auto;
   min-height: 100%;
   max-height: 85vh;
   position: relative;
   display: grid;
-  grid-template-rows: 3rem 1fr 5rem;
+  grid-template-rows: 3.5rem 1fr 5rem;
   justify-items: stretch;
-}
-.chatContainer .react-input-emoji--container{
-  border-radius: 0 !important;
+  background-color: #EDF2F9;
+  border-radius: 10px;
+  transition: width 1s ease;
 }
 .chatContainer .react-emoji{
-  border-radius: 0 !important;
-  height: 100% ;
+  margin-left: 10px;
+  width: auto;
+  max-width: 90%;
+  height: auto;
+}
+.chatContainer .react-input-emoji--container{
+  border-radius: 5px 0 0 5px !important;
+}
+.react-input-emoji--button{
+  position: relative;
+  left: -5px;
+  background-color: #fff !important;
+  padding: 8px;
+  border-radius: 0 5px 5px 0;
+}
+.react-input-emoji--button > svg{
+  fill: var(--primary-color);
 }
 .chatContainer > .msgHeader{
   width: 100%;
@@ -26,15 +41,23 @@
   border-bottom: 1px solid rgba(2, 25, 36, 0.1);
 }
 .chatContainer > .msgHeader > h2{
-  color: rgba(2, 25, 36, 0.8);
-  font-size: 15px;
+  color: rgba(2, 25, 36, 0.9);
+  font-size: 16px;
   margin-left: 20px;
-  font-weight: 500;
+  font-weight: 600;
 }
 .chatContainer > .msgHeader > .rmIcon{
-  color: rgba(2, 25, 36, 0.5);
-  font-size: 20px;
+  color: var(--primary-color);
+  font-size: 18px;
   margin-right: 20px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(46, 56, 72, 0.1);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  border-radius: 10px;
+  padding: 4px;
+  font-weight: 600;
 }
 .chatContainer > .msgContainer{
   position: relative;
