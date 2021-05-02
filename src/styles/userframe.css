@@ -14,6 +14,10 @@
   place-items: center;
 }
 .frameContainer .frame .frameIcon{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   font-size: 140px;
   color: #00A0E9;
   opacity: 0.1;
