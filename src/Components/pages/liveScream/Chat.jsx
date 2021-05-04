@@ -3,27 +3,27 @@ import Fade from 'react-reveal/Fade';
 import { addMsg } from '../../../action/addMsg';
 import { connect } from 'react-redux';
 import { FiX } from 'react-icons/fi';
+import Axios from 'axios';
 import InputEmoji from 'react-input-emoji';
+import AgoraRTM from 'agora-rtm-sdk';
 
 import '../../../styles/chat.css';
 
 class Chat extends Component {
   constructor(props) {
     super(props);
+    let params = new URLSearchParams(window.location.search);
     this.state = {
-      msg: '',
+      msg: [''],
       text: '',
+      username: params?.get('username'),
+      channel: params?.get('user_id'),
     };
     this.handleOnEnter = this.handleOnEnter.bind(this);
-    console.log('from chat', this.props.msgs);
-  }
+    this.initChat = this.initChat.bind(this);
+    this.handleSendMsg = this.handleSendMsg.bind(this);
 
-  handleOnEnter(text) {
-    if (text !== '') {
-      this.props.addNewMsg(text);
-      this.props.handleSendMsg(this.props._msg);
-      console.log(this.props._msg);
-    }
+    console.log('from chat', this.props.msgs);
   }
   handleClick(e) {
     const chatContainer = document.getElementById('chatContainer');
@@ -33,13 +33,86 @@ class Chat extends Component {
   scrollToBottom = () => {
     this.messagesEnd.scrollIntoView({ behavior: 'smooth' });
   };
+  client = AgoraRTM.createInstance('306d86f1ec2644c3affab320daef132c', {
+    enableLogUpload: false,
+  });
+  params = new URLSearchParams(window.location.search);
+  channel = this.client.createChannel(this.params?.get('user_id'));
+  async initChat() {
+    const getChannelMsg = (msg, user) => {
+      let newMsg = { sender: user, msg: msg };
+      this.setState({ msg: [...this.state.msg, newMsg] });
+    };
+    // Client Event listeners
+    // Display messages from peer
+    this.client.on('MessageFromPeer', function (message, peerId) {
+      this.setState({ msg: [...this.state.msg, message + peerId] });
+    });
+    // Display connection state changes
+    this.client.on('ConnectionStateChanged', function (state, reason) {
+      console.log('State changed To: ' + state + ' Reason: ' + reason);
+    });
+    this.channel.on('ChannelMessage', function (message, memberId) {
+      console.log(message + 'from' + memberId);
+      getChannelMsg(message.text, memberId);
+    });
+    // Display channel member stats
+    this.channel.on('MemberJoined', function (memberId) {
+      let msg = memberId + ' joined the channel';
+      getChannelMsg(msg, 'ParrotSays bot');
+    });
+    // Display channel member stats
+    this.channel.on('MemberLeft', function (memberId) {
+      let msg = memberId + ' left the channel';
+      getChannelMsg(msg, 'ParrotSays bot');
+    });
+    // Button behavior
+    // Buttons
+    // login
 
-  componentDidMount() {
+    await this.client.login({
+      uid: this.state.username,
+      token: this.state.token,
+    });
+    await this.channel.join().then(() => {
+      console.log(
+        'You have successfully joined channel ' + this.channel.channelId
+      );
+    });
+  }
+  async handleSendMsg(text) {
+    if (this.channel !== null) {
+      await this.channel.sendMessage({ text: text }).then(() => {
+        let newMsg = { sender: 'self', msg: text };
+        this.setState({ msg: [...this.state.msg, newMsg] });
+      });
+    }
+  }
+  async componentDidMount() {
     this.scrollToBottom();
+    if (this.state.username) {
+      await Axios.post('https://parrotsays-backend.herokuapp.com/rtmtoken', {
+        user: this.state.username,
+      }).then((res) => this.setState({ token: res.data.token }));
+      console.log(this.state.username);
+    } else {
+      console.log('no username');
+    }
+    if (this.state.token) {
+      this.initChat(this.state.token);
+    } else {
+      console.log('not yet');
+    }
   }
 
   componentDidUpdate() {
     this.scrollToBottom();
+  }
+  handleOnEnter(text) {
+    if (text !== '') {
+      this.handleSendMsg(text);
+    }
+    console.log(this.state.msg);
   }
 
   render() {
@@ -50,7 +123,7 @@ class Chat extends Component {
           <FiX onClick={this.handleClick} className="rmIcon" />
         </div>
         <div className="msgContainer">
-          {this.props.msgs.map((msg) => {
+          {this.state.msg.map((msg) => {
             return (
               <div>
                 <div className={`msg ${msg.sender}`}>{msg.msg}</div>

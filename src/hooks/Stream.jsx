@@ -7,6 +7,7 @@ import '../styles/stream.css';
 export default class Stream extends Component {
   constructor(props) {
     super(props);
+    let params = new URLSearchParams(window.location.search);
     this.state = {
       client: null,
       // For the local audio and video tracks.
@@ -14,10 +15,10 @@ export default class Stream extends Component {
       localVideoTrack: null,
       appid: '306d86f1ec2644c3affab320daef132c',
       token: '',
-      channel: this.props.channel,
-      role: this.props.role,
+      channel: params?.get('user_id'),
+      role: 'host',
       uid: '',
-      username: this.props.username,
+      username: params?.get('username'),
       remoteUsers: {},
       isActive: false,
       videoTrackEnabled: true,
@@ -26,16 +27,16 @@ export default class Stream extends Component {
   }
 
   async componentDidMount() {
-    if (this.props.channel) {
+    if (this.state.channel) {
       await Axios.post('https://parrotsays-backend.herokuapp.com/rtctoken', {
-        channel: this.props.channel,
+        channel: this.state.channel,
         isPublisher: true,
       }).then((res) =>
         this.setState({ token: res.data.token, uid: res.data.uid })
       );
       console.log(this.state.token);
     } else {
-      console.log('no username');
+      console.log('no channel provided');
     }
     // ----------AGORA RTC INIT-----------
     if (this.state.token) {

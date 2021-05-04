@@ -1,12 +1,18 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import LiveStream from './Components/pages/liveScream/LiveStream';
+import JoinStream from './Components/pages/liveScream/JoinStream';
 
 export default class App extends Component {
   render() {
     return (
       <div className="containers">
-        <LiveStream />
+        <Router>
+          <Switch>
+            <Route path="/" exact component={LiveStream} />
+            <Route path="/stream" exact component={JoinStream} />
+          </Switch>
+        </Router>
       </div>
     );
   }
