@@ -14,7 +14,7 @@ export default class JoinStreamHook extends Component {
       localVideoTrack: null,
       appid: '306d86f1ec2644c3affab320daef132c',
       token: '',
-      channel: params?.get('user_id'),
+      channel: params?.get('channel'),
       role: 'audience',
       uid: '',
       username: params?.get('username'),
