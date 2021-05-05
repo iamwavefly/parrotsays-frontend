@@ -22,8 +22,6 @@ class Chat extends Component {
     this.handleOnEnter = this.handleOnEnter.bind(this);
     this.initChat = this.initChat.bind(this);
     this.handleSendMsg = this.handleSendMsg.bind(this);
-
-    console.log('from chat', this.props.msgs);
   }
   handleClick(e) {
     const chatContainer = document.getElementById('chatContainer');
@@ -37,7 +35,11 @@ class Chat extends Component {
     enableLogUpload: false,
   });
   params = new URLSearchParams(window.location.search);
-  channel = this.client.createChannel(this.params?.get('user_id'));
+  channelUrl =
+    window.location.pathname === '/stream/'
+      ? this.params?.get('channel')
+      : this.params?.get('username');
+  channel = this.client.createChannel(this.channelUrl);
   async initChat() {
     const getChannelMsg = (msg, user) => {
       let newMsg = { sender: user, msg: msg };
