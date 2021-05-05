@@ -27,9 +27,9 @@ export default class Stream extends Component {
   }
 
   async componentDidMount() {
-    if (this.state.channel) {
+    if (this.state.username) {
       await Axios.post('https://parrotsays-backend.herokuapp.com/rtctoken', {
-        channel: this.state.channel,
+        channel: this.state.username,
         isPublisher: true,
       }).then((res) =>
         this.setState({ token: res.data.token, uid: res.data.uid })
@@ -269,7 +269,7 @@ export default class Stream extends Component {
         });
       });
       // endStreamControl;
-      joinChannel(this.state.channel);
+      joinChannel(this.state.username);
     }
   }
   render() {

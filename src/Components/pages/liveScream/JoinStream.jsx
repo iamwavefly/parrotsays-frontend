@@ -13,7 +13,7 @@ export default class JoinStream extends Component {
           <Header />
           <AttendeeFrame />
           <JoinStreamHook />
-          <Chat />
+          {/* <Chat /> */}
           <StreamControls />
         </div>
       </div>
