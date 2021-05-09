@@ -1,16 +1,23 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import AgoraRTC from 'agora-rtc-sdk';
 import Axios from 'axios';
+import { shareScreen } from '../action/addMsg';
 import UserFrame from '../Components/pages/liveScream/UserFrame';
 import '../styles/stream.css';
+import { FaThumbsDown } from 'react-icons/fa';
 
-export default class Stream extends Component {
+class Stream extends Component {
   constructor(props) {
     super(props);
     let params = new URLSearchParams(window.location.search);
     this.state = {
       client: null,
+      // cloud storage
+      resourceId: '',
+      sid: '',
       // For the local audio and video tracks.
+      screenShareActive: false,
       localAudioTrack: null,
       localVideoTrack: null,
       appid: '306d86f1ec2644c3affab320daef132c',
@@ -21,11 +28,92 @@ export default class Stream extends Component {
       username: params?.get('username'),
       remoteUsers: {},
       isActive: false,
+      shareScreen: false,
       videoTrackEnabled: true,
       audioTrackEnabled: true,
     };
+    this.shareScreen = this.shareScreen.bind(this);
+
+    if (this.state.shareScreen === true) {
+      alert('true');
+      // initScreenShare(this.state.appid, this.state.channel);
+    }
   }
 
+  shareScreen = () => {
+    console.log(this.props.share.share);
+    this.setState({ shareScreen: this.props.share.share });
+  };
+
+  async cloudRecord(UID) {
+    const userid = Number(UID);
+    const getResourceId = async () => {
+      await Axios.post('http://localhost:5000/acquire', {
+        channel: this.state.username,
+        uid: `${userid}`,
+      })
+        .then((res) => {
+          this.setState({ resourceId: res.data.resourceId });
+          console.log(
+            '-------------------get resource id------------------',
+            res
+          );
+        })
+        .catch((err) => console.log(err));
+    };
+    const startCloudRecord = async () => {
+      await Axios.post('http://localhost:5000/start', {
+        channel: this.state.username,
+        uid: `${userid}`,
+        mode: 'web',
+        resource: this.state.resourceId,
+        token: this.state.token,
+      })
+        .then((res) => {
+          this.setState({ resourceId: res.data.resourceId, sid: res.data.sid });
+          console.log('start-----------------------', res);
+        })
+        .catch((err) => console.log(err));
+    };
+    const queryCloudRecord = async () => {
+      await Axios.post('http://localhost:5000/query', {
+        resource: this.state.resourceId,
+        sid: this.state.sid,
+        mode: 'web',
+      })
+        .then((res) => {
+          this.setState({ resourceId: res.data.resourceId, sid: res.data.sid });
+          console.log('query-----------------------', res);
+        })
+        .catch((err) => console.log(err));
+    };
+    const stopCloudRecord = async () => {
+      await Axios.post('http://localhost:5000/stop', {
+        resource: this.state.resourceId,
+        sid: this.state.sid,
+        mode: 'mix',
+        channel: this.state.channel,
+        uid: `${userid}`,
+      })
+        .then((res) => {
+          this.setState({ resourceId: res.data.resourceId, sid: res.data.sid });
+          console.log('stop-----------------------', res);
+        })
+        .catch((err) => console.log(err));
+    };
+    setTimeout(() => {
+      getResourceId();
+    }, 10000);
+    setTimeout(() => {
+      startCloudRecord();
+    }, 50000);
+    setTimeout(() => {
+      queryCloudRecord();
+    }, 60000);
+    // setTimeout(() => {
+    //   stopCloudRecord();
+    // }, 80000);
+  }
   async componentDidMount() {
     if (this.state.username) {
       await Axios.post('https://parrotsays-backend.herokuapp.com/rtctoken', {
@@ -49,14 +137,21 @@ export default class Stream extends Component {
        */
 
       // Defaults
-      let client = AgoraRTC.createClient({ mode: 'live', codec: 'vp8' });
+      let client = AgoraRTC.createClient({ mode: 'live', codec: 'h264' });
+      let screenClient = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' });
       let mainStreamId;
+      // video profile settings // 640 × 480 @ 30fps  & 750kbs
+      let screenVideoProfile = '1080p_2'; // 640 × 480 @ 30fps
       let cameraVideoProfile = '720p_6';
       let localStreams = {
         uid: '',
         camera: {
           camId: '',
           micId: '',
+          stream: {},
+        },
+        screen: {
+          id: '',
           stream: {},
         },
       };
@@ -80,7 +175,10 @@ export default class Stream extends Component {
       client.on('stream-subscribed', function (evt) {
         var remoteStream = evt.stream;
         var remoteId = remoteStream.getId();
-        console.log('Subscribe remote stream successfully: ' + remoteId);
+        console.log(
+          'Subscribe remote stream successfully---------------------------------------: ' +
+            remoteId
+        );
         if (localVideoPlayer.innerHTML === '') {
           mainStreamId = remoteId;
           remoteStream.play('local-player');
@@ -97,7 +195,7 @@ export default class Stream extends Component {
       });
 
       // Join Channel
-      const joinChannel = (channelName) => {
+      const joinChannel = async (channelName) => {
         // disableChannelBtn();
         let token = this.state.token;
         let userID = null;
@@ -112,21 +210,23 @@ export default class Stream extends Component {
           token,
           channelName,
           userID,
-          function (uid) {
+          async (uid) => {
             createCameraStream(uid, {});
             localStreams.uid = uid;
+            this.setState({ uid: uid });
+            localStreams.camera.id = uid;
+            await this.cloudRecord(uid);
           },
           function (err) {}
         );
       };
-
       // Frontal Screen : Camera
-      function createCameraStream(uid, deviceIds) {
+      const createCameraStream = (uid, deviceIds) => {
         var localStream = AgoraRTC.createStream({
           streamID: uid,
           audio: true,
           video: true,
-          screen: false,
+          screen: this.state.shareScreen,
         });
         localStream.setVideoProfile(cameraVideoProfile);
         localStream.on('accessAllowed', function () {
@@ -154,46 +254,143 @@ export default class Stream extends Component {
           },
           function (err) {}
         );
-      }
-      function changeStreamSource(deviceIndex, deviceType) {
-        console.log('Switching stream sources for: ' + deviceType);
-        var deviceId;
-        var existingStream = false;
-
-        if (deviceType === 'video') {
-          deviceId = devices.cameras[deviceIndex].deviceId;
-        }
-
-        if (deviceType === 'audio') {
-          deviceId = devices.mics[deviceIndex].deviceId;
-        }
-
-        localStreams.camera.stream.switchDevice(
-          deviceType,
-          deviceId,
-          function () {
-            console.log(
-              'successfully switched to new device with id: ' +
-                JSON.stringify(deviceId)
-            );
-            // set the active device ids
-            if (deviceType === 'audio') {
-              localStreams.camera.micId = deviceId;
-            } else if (deviceType === 'video') {
-              localStreams.camera.camId = deviceId;
-            } else {
-              console.log('unable to determine deviceType: ' + deviceType);
-            }
+      };
+      //screen sharing
+      // SCREEN SHARING
+      // SCREEN SHARING
+      const initScreenShare = () => {
+        screenClient.init(
+          this.state.appid,
+          () => {
+            console.log('AgoraRTC screenClient initialized');
+            joinChannelAsScreenShare();
+            this.setState({ screenShareActive: true });
+            // TODO: add logic to swap button
           },
-          function () {
-            console.log(
-              'failed to switch to new device with id: ' +
-                JSON.stringify(deviceId)
-            );
+          function (err) {
+            console.log('[ERROR] : AgoraRTC screenClient init failed', err);
           }
         );
-      }
+      };
 
+      const joinChannelAsScreenShare = () => {
+        let token = this.state.token;
+        var userID = null; // set to null to auto generate uid on successfull connection
+        screenClient.join(
+          token,
+          this.state.username,
+          userID,
+          (uid) => {
+            localStreams.screen.id = uid; // keep track of the uid of the screen stream.
+
+            // Create the stream for screen sharing.
+            let screenStream = AgoraRTC.createStream({
+              streamID: uid,
+              audio: false, // Set the audio attribute as false to avoid any echo during the call.
+              video: false,
+              screen: true, // screen stream
+              // extensionId: 'minllpmhdgpndnkomcoccfekfegnlikg', // Google Chrome:
+              mediaSource: 'screen', // Firefox: 'screen', 'application', 'window' (select one)
+            });
+            screenStream.setScreenProfile(screenVideoProfile); // set the profile of the screen
+            screenStream.init(
+              function () {
+                console.log('getScreen successful');
+                localStreams.screen.stream = screenStream; // keep track of the screen stream
+                // $('#screen-share-btn').prop('disabled', false); // enable button
+                screenClient.publish(screenStream, function (err) {
+                  console.log('[ERROR] : publish screen stream error: ' + err);
+                });
+              },
+              (err) => {
+                console.log('[ERROR] : getScreen failed', err);
+                localStreams.screen.id = ''; // reset screen stream id
+                localStreams.screen.stream = {}; // reset the screen stream
+                this.setState({ screenShareActive: false }); // resest screenShare
+                // toggleScreenShareBtn(); // toggle the button icon back (will appear disabled)
+              }
+            );
+          },
+          function (err) {
+            console.log('[ERROR] : join channel as screen-share failed', err);
+          }
+        );
+
+        screenClient.on('stream-published', (evt) => {
+          console.log('Publish screen stream successfully');
+          localStreams.camera.stream.disableVideo(); // disable the local video stream (will send a mute signal)
+          localStreams.camera.stream.stop(); // stop playing the local stream
+          // TODO: add logic to swap main video feed back from container
+          // remoteStreams[mainStreamId].stop(); // stop the main video stream playback
+          // addRemoteStreamMiniView(remoteStreams[mainStreamId]); // send the main video stream to a container
+          localStreams.screen.stream.play('local-player'); // play the screen share as full-screen-video (vortext effect?)
+          // $('#video-btn').prop('disabled', true); // disable the video button (as cameara video stream is disabled)
+        });
+
+        screenClient.on('stopScreenSharing', function (evt) {
+          console.log('screen sharing stopped');
+        });
+      };
+      const stopScreenShare = () => {
+        localStreams.screen.stream.disableVideo(); // disable the local video stream (will send a mute signal)
+        localStreams.screen.stream.stop(); // stop playing the local stream
+        localStreams.camera.stream.enableVideo(); // enable the camera feed
+        localStreams.camera.stream.play('local-player'); // play the camera within the full-screen-video div
+        // $("#video-btn").prop("disabled",false);
+        screenClient.leave(
+          () => {
+            this.setState({ screenShareActive: false });
+            console.log('screen client leaves channel');
+            // $('#screen-share-btn').prop('disabled', false); // enable button
+            screenClient.unpublish(localStreams.screen.stream); // unpublish the screen client
+            localStreams.screen.stream.close(); // close the screen client stream
+            localStreams.screen.id = ''; // reset the screen id
+            localStreams.screen.stream = {}; // reset the stream obj
+          },
+          function (err) {
+            console.log('client leave failed ', err); //error handling
+          }
+        );
+      };
+
+      // function changeStreamSource(deviceIndex, deviceType) {
+      //   console.log('Switching stream sources for: ' + deviceType);
+      //   var deviceId;
+      //   var existingStream = false;
+
+      //   if (deviceType === 'video') {
+      //     deviceId = devices.cameras[deviceIndex].deviceId;
+      //   }
+
+      //   if (deviceType === 'audio') {
+      //     deviceId = devices.mics[deviceIndex].deviceId;
+      //   }
+
+      //   localStreams.camera.stream.switchDevice(
+      //     deviceType,
+      //     deviceId,
+      //     function () {
+      //       console.log(
+      //         'successfully switched to new device with id: ' +
+      //           JSON.stringify(deviceId)
+      //       );
+      //       // set the active device ids
+      //       if (deviceType === 'audio') {
+      //         localStreams.camera.micId = deviceId;
+      //       } else if (deviceType === 'video') {
+      //         localStreams.camera.camId = deviceId;
+      //       } else {
+      //         console.log('unable to determine deviceType: ' + deviceType);
+      //       }
+      //     },
+      //     function () {
+      //       console.log(
+      //         'failed to switch to new device with id: ' +
+      //           JSON.stringify(deviceId)
+      //       );
+      //     }
+      //   );
+      // }
       // Get Device Info
       // Video Devices
       function getCameraDevices() {
@@ -268,10 +465,20 @@ export default class Stream extends Component {
           window.location = 'https://parrotsays.com/';
         });
       });
-      // endStreamControl;
       joinChannel(this.state.username);
+
+      let shareScreenBtn = document.getElementById('shareScreenBtn');
+
+      shareScreenBtn.addEventListener('click', () => {
+        if (this.state.screenShareActive) {
+          stopScreenShare();
+        } else {
+          initScreenShare(this.state.appid, this.state.username);
+        }
+      });
     }
   }
+
   render() {
     return (
       <div className="streamContainer">
@@ -280,3 +487,16 @@ export default class Stream extends Component {
     );
   }
 }
+const mapStateToProps = (state) => {
+  return {
+    share: state.screenShare,
+  };
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    addNewMsg: (share) => {
+      dispatch(shareScreen(share));
+    },
+  };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(Stream);

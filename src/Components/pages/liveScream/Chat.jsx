@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import Fade from 'react-reveal/Fade';
-import { addMsg } from '../../../action/addMsg';
+import { updateUsers } from '../../../action/addMsg';
 import { connect } from 'react-redux';
 import { FiX } from 'react-icons/fi';
 import Axios from 'axios';
 import InputEmoji from 'react-input-emoji';
 import AgoraRTM from 'agora-rtm-sdk';
 
+import msgNotif from '../../../assets/sound/chat-notification.mp3';
 import '../../../styles/chat.css';
 
 class Chat extends Component {
@@ -14,8 +14,10 @@ class Chat extends Component {
     super(props);
     let params = new URLSearchParams(window.location.search);
     this.state = {
-      msg: [''],
+      msg: [],
+      users: [],
       text: '',
+      sound: new Audio(msgNotif),
       username: params?.get('username'),
       channel: params?.get('user_id'),
     };
@@ -42,7 +44,11 @@ class Chat extends Component {
   channel = this.client.createChannel(this.channelUrl);
   async initChat() {
     const getChannelMsg = (msg, user) => {
-      let newMsg = { sender: user, msg: msg };
+      let newMsg = {
+        sender: user,
+        msg: msg,
+        msgId: Math.floor(Math.random() * 99),
+      };
       this.setState({ msg: [...this.state.msg, newMsg] });
     };
     // Client Event listeners
@@ -51,12 +57,13 @@ class Chat extends Component {
       this.setState({ msg: [...this.state.msg, message + peerId] });
     });
     // Display connection state changes
-    this.client.on('ConnectionStateChanged', function (state, reason) {
+    this.client.on('ConnectionStateChanged', (state, reason) => {
       console.log('State changed To: ' + state + ' Reason: ' + reason);
     });
-    this.channel.on('ChannelMessage', function (message, memberId) {
-      console.log(message + 'from' + memberId);
+    this.channel.on('ChannelMessage', (message, memberId) => {
+      console.log(message.text + ' from ' + memberId);
       getChannelMsg(message.text, memberId);
+      this.state.sound.play();
     });
     // Display channel member stats
     this.channel.on('MemberJoined', function (memberId) {
@@ -81,7 +88,15 @@ class Chat extends Component {
         'You have successfully joined channel ' + this.channel.channelId
       );
     });
+    await this.channel
+      .getMembers()
+      .then((users) => {
+        this.setState({ users: users });
+        this.props.updateUsers(this.state.users);
+      })
+      .catch((err) => console.log(err));
   }
+
   async handleSendMsg(text) {
     if (this.channel !== null) {
       await this.channel.sendMessage({ text: text }).then(() => {
@@ -128,7 +143,9 @@ class Chat extends Component {
           {this.state.msg.map((msg) => {
             return (
               <div>
-                <div className={`msg ${msg.sender}`}>{msg.msg}</div>
+                <div key={msg.msgId} className={`msg ${msg.sender}`}>
+                  {msg.msg}
+                </div>
                 {msg.sender !== 'self' && (
                   <span className="sender">from {msg.sender}</span>
                 )}
@@ -161,8 +178,8 @@ const mapStateToProps = (state) => {
 };
 const mapDispatchToProps = (dispatch) => {
   return {
-    addNewMsg: (msg) => {
-      dispatch(addMsg(msg));
+    updateUsers: (users) => {
+      dispatch(updateUsers(users));
     },
   };
 };

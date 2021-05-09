@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { shareScreen } from '../../../action/addMsg';
+import { connect } from 'react-redux';
 import Fade from 'react-reveal/Fade';
 import {
   MdMic,
@@ -9,7 +11,11 @@ import {
 } from 'react-icons/md';
 import '../../../styles/streamControls.css';
 
-export default class StreamControls extends Component {
+class StreamControls extends Component {
+  constructor(props) {
+    super(props);
+    this.handleClick = this.handleClick.bind(this);
+  }
   handleClick(e) {
     const chatContainer = document.getElementById('chatContainer');
     if (e.target.classList.contains('control')) {
@@ -18,6 +24,10 @@ export default class StreamControls extends Component {
     if (e.target.classList.contains('chatControl')) {
       console.log('got click');
       chatContainer.classList.toggle('toggleChat');
+    }
+    if (e.target.classList.contains('shareScreenControl')) {
+      this.props.shareScreen(!this.props.share.share);
+      console.log(this.props);
     }
   }
   render() {
@@ -41,6 +51,7 @@ export default class StreamControls extends Component {
             </div>
             <div
               onClick={this.handleClick}
+              id="shareScreenBtn"
               className="control shareScreenControl"
             >
               <MdScreenShare className="icon shareScreenIcon" />
@@ -57,3 +68,18 @@ export default class StreamControls extends Component {
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    share: state.screenShare,
+  };
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    shareScreen: (share) => {
+      dispatch(shareScreen(share));
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(StreamControls);

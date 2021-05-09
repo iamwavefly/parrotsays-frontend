@@ -30,3 +30,113 @@
   width: 100%;
   height: 100%;
 }
+/* .liveStreamBadge{
+  position: absolute;
+  top: 5%;
+  left: 3%;
+  z-index: 99;
+  color: #fff;
+  width: fit-content !important;
+  height: 20px !important;
+  display: flex;
+  align-items: center;
+  padding: 5px 15px;
+  border-radius: 10px;
+}  */
+/* .livePointer{
+  width: 10px !important;
+  height: 10px !important;
+  background-color: #ee2f4b;
+  z-index: 999;
+  border-radius: 50%;
+  margin-left: 6px;
+} */
+.badge{
+  position: absolute;
+  display: flex;
+  top: 6%;
+  left: 4%;
+  z-index: 99;
+  align-items: center;
+  width: auto !important;
+  height: auto !important;
+}
+.liveStreamBadge {
+  z-index: 99;
+  width: fit-content !important;
+  height: 20px !important;
+  text-align: center;
+  white-space: nowrap;
+  display: block;
+  padding: 3px 10px;
+  box-shadow: 0 0 0 0 rgba(232, 76, 61, 0.7);
+  border-radius: 6px;
+  background-color: #d82837;
+  -webkit-animation: pulsing 4.25s infinite cubic-bezier(0.66, 0, 0, 1);
+  -moz-animation: pulsing 4.25s infinite cubic-bezier(0.66, 0, 0, 1);
+  -ms-animation: pulsing 4.25s infinite cubic-bezier(0.66, 0, 0, 1);
+  animation: pulsing 4.25s infinite cubic-bezier(0.66, 0, 0, 1);
+  font-weight: normal;
+  font-size: 14px;
+  text-decoration: none !important;
+  color: #ffffff;
+  transition: all 300ms ease-in-out;
+  text-transform: uppercase;
+}
+
+.activeUserBadge{
+  background-color: rgba(58, 7, 11, 0.1);
+  padding: 5px;
+  width: 40px !important;
+  height: 15px !important;
+  border-radius: 6px;
+  z-index: 99;
+  margin-left: 5px;
+  color: #fff !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px !important;
+}
+.activeUserBadge .activeIcon{
+  color: #fff !important;
+  z-index: 9999;
+  margin-right: 5px;
+
+}
+/* Comment-out to have the button continue to pulse on mouseover */
+
+a.pulsingButton:hover {
+  -webkit-animation: none;
+  -moz-animation: none;
+  -ms-animation: none;
+  animation: none;
+  color: #ffffff;
+}
+
+
+/* Animation */
+
+@-webkit-keyframes pulsing {
+  to {
+    box-shadow: 0 0 0 30px rgba(232, 76, 61, 0);
+  }
+}
+
+@-moz-keyframes pulsing {
+  to {
+    box-shadow: 0 0 0 30px rgba(232, 76, 61, 0);
+  }
+}
+
+@-ms-keyframes pulsing {
+  to {
+    box-shadow: 0 0 0 30px rgba(232, 76, 61, 0);
+  }
+}
+
+@keyframes pulsing {
+  to {
+    box-shadow: 0 0 0 30px rgba(232, 76, 61, 0);
+  }
+}

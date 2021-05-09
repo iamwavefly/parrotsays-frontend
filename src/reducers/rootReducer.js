@@ -1,12 +1,8 @@
-const initState = {
-  msg: '',
-};
-const rootReducer = (state = initState, action) => {
-  if (action.type === 'ADD_MSG') {
-    return {
-      newMsg: action.payload,
-    };
-  }
-  return state;
-};
-export default rootReducer;
+import screenShare from './shareScreenReducer';
+import users from './msgReducer';
+import { combineReducers } from 'redux';
+
+export default combineReducers({
+  users,
+  screenShare,
+});

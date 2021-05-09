@@ -71,7 +71,7 @@
   margin: auto auto;
 }
 .chatContainer > .msgContainer .msg{
-  background-color:#eee;
+  background-color:rgba(0, 93, 136, 0.1);
   color: #333;
   font-weight: 400;
   width: fit-content;
@@ -100,7 +100,7 @@
 .chatContainer > .msgContainer .msg.bot{
   margin-left:  auto;
   margin-right:  auto;
-  background: rgba(237, 69, 94, 0.1);
+  background: rgba(237, 69, 94, 0.041);
 }
 .chatContainer > .msgContainer .msg.bot + span{
   position: relative;

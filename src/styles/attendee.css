@@ -1,10 +1,78 @@
 .attendeeContainer{
   background-color: #EDF2F9;
   display: grid;
-  place-items: center;
+  grid-template-rows: 3.5rem 1fr 5rem;
   width: 100%;
   height: 100%;
   grid-column: 1 / 2;
   grid-row: 2 / -1;
   border-radius: 10px;
+}
+.attendeeContainer .usersHeader{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(2, 25, 36, 0.1);
+}
+.attendeeContainer > .usersHeader > h2{
+  color: rgba(2, 25, 36, 0.9);
+  font-size: 16px;
+  margin-left: 20px;
+  font-weight: 600;
+}
+.attendeeContainer > .usersHeader > .rmIcon{
+  color: var(--primary-color);
+  font-size: 18px;
+  margin-right: 20px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(46, 56, 72, 0.1);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  border-radius: 10px;
+  padding: 4px;
+  font-weight: 600;
+}
+.attendeeContainer .usersContainer{
+  position: relative;
+  overflow-y: auto;
+  width: 100%;
+  height: auto;
+  min-height: fit-content;
+  margin: 0 auto;
+}
+.attendeeContainer .usersHeader span{
+  font-size: 14px;
+  margin-left: 5px;
+  color: var(--primary-color);
+}
+.attendeeContainer .usersContainer .user{
+  position: relative;
+  font-weight: 400;
+  width: 100%;
+  height: auto;
+  min-height: 20px;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.8rem;
+  color: rgba(0, 24, 36, 0.8);
+  font-weight: 500;
+  border-radius: 1rem;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  max-width: 10rem;
+  margin-top: 10px;
+  margin-left: 16px;
+  background-color: rgba(0, 93, 136, 0.1);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+.attendeeContainer .usersContainer .user .icon{
+  position: relative;
+  top: 1px;
+  margin-right: 2px;
 }

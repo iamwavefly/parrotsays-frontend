@@ -67,6 +67,7 @@ export default class JoinStreamHook extends Component {
         } else {
           // addRemoteStreamMiniView(remoteStream);
         }
+        console.log('-------------------------', remoteStream);
       });
 
       // Stop Stream
