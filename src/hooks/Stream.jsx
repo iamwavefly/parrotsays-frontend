@@ -215,7 +215,7 @@ class Stream extends Component {
             localStreams.uid = uid;
             this.setState({ uid: uid });
             localStreams.camera.id = uid;
-            await this.cloudRecord(uid);
+            // await this.cloudRecord(uid);
           },
           function (err) {}
         );
@@ -332,10 +332,10 @@ class Stream extends Component {
         });
       };
       const stopScreenShare = () => {
-        localStreams.screen.stream.disableVideo(); // disable the local video stream (will send a mute signal)
-        localStreams.screen.stream.stop(); // stop playing the local stream
-        localStreams.camera.stream.enableVideo(); // enable the camera feed
-        localStreams.camera.stream.play('local-player'); // play the camera within the full-screen-video div
+        localStreams.screen.stream?.disableVideo(); // disable the local video stream (will send a mute signal)
+        localStreams.screen.stream?.stop(); // stop playing the local stream
+        localStreams.camera.stream?.enableVideo(); // enable the camera feed
+        localStreams.camera.stream?.play('local-player'); // play the camera within the full-screen-video div
         // $("#video-btn").prop("disabled",false);
         screenClient.leave(
           () => {
