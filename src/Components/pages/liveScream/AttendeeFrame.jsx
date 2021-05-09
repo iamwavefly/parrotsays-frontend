@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Moment from 'react-moment';
+// import Moment from 'react-moment';
 
 import { FiX, FiClock, FiUser } from 'react-icons/fi';
 
@@ -29,10 +29,10 @@ class AttendeeFrame extends Component {
                   <FiUser className="icon user_icon" />
                   <span>{user}</span>
                 </div>
-                <div className="timestamp">
+                {/* <div className="timestamp">
                   <FiClock className="icon time_icon" />
                   <span>{<Moment toNow>{Date.now()}</Moment>}</span>
-                </div>
+                </div> */}
               </div>
             );
           })}
