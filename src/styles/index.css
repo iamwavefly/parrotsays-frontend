@@ -1,15 +1,27 @@
 
 .container{
-  position: absolute;
+  position: relative;
   width: 97%;
   height: 95vh;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  margin: auto auto;
+  top: 25%;
   display: grid;
   place-items: center;
-  grid-template-rows: 4rem 1fr 4rem;
-  grid-template-columns: 15rem 1fr auto;
+  grid-template-rows: auto 1fr auto;
+  grid-template-columns: auto 1fr auto;
   grid-gap: 12px;
   overflow-x: hidden;
+}
+
+@media only screen and (max-width: 600px){
+  .container{
+    background-color: #222;
+    width: 100%;
+    height: 100vh;
+    grid-gap:0;
+    border-radius: 0;
+    top: 0;
+    margin: 0;
+    padding: 0;
+  }
 }

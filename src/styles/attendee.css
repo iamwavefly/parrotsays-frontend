@@ -2,7 +2,7 @@
   background-color: #EDF2F9;
   display: grid;
   grid-template-rows: 3.5rem 1fr 5rem;
-  width: 100%;
+  width: 15rem;
   height: 100%;
   grid-column: 1 / 2;
   grid-row: 2 / -1;

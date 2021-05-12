@@ -1,11 +1,11 @@
 .chatContainer{
+  position: relative;
   grid-column: 3 / -1;
   grid-row: 1 / -1;
   width: 18rem;
   height: auto;
   min-height: 100%;
   max-height: 85vh;
-  position: relative;
   display: grid;
   grid-template-rows: 3.5rem 1fr 5rem;
   justify-items: stretch;
@@ -105,4 +105,61 @@
 .chatContainer > .msgContainer .msg.bot + span{
   position: relative;
   left: 25%;
+}
+
+@media only screen and (max-width: 600px){
+  .chatContainer{
+    position: absolute !important;
+    right: 10%;
+    bottom: 10%;
+    width: 100vw;
+    height: 5rem !important;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 25%, black 75%);
+    mask-image: linear-gradient(to bottom, transparent 25%, black 75%);
+    z-index: 999;
+    background-color: rgba(1, 13, 19, 0.2);
+  }
+  .chatContainer .msgContainer{
+    display: flex;
+    align-items: flex-end;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  .chatContainer > .msgContainer .msg{
+    background-image: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%) !important; 
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f09433', endColorstr='#bc1888',GradientType=1 );
+    color: #fafafa;
+    text-align: right;
+  }
+  .chatContainer > .msgContainer .msg.self{
+    background-image: none !important;
+    background-color: rgba(0, 159, 233, 0.1);
+    left: 0;
+  }
+  .chatContainer > .msgContainer .msg.sender{
+    background-color: rgba(1, 13, 19, 0.1);
+    left: 100%;
+  };
+  .chatContainer > .msgContainer .msg.bot{
+    color: #f1f1f1
+  }
+  .chatContainer > .msgContainer span{
+    color: #eee;
+    left: 0;
+    text-align: right;
+  }
+  .react-input-emoji--container{
+    background-color: transparent;
+    border: 1px solid #eee;
+  }
+  .chatContainer .react-input-emoji--container{
+    border-radius: 40px !important;
+  }
+  .react-input-emoji--button{
+    background-color: transparent !important;
+  }
+  .react-input-emoji--button > svg{
+    fill: #eee !important;
+
+  }
 }
