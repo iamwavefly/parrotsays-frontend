@@ -46,10 +46,13 @@ class Stream extends Component {
   };
   async componentDidMount() {
     if (this.state.username) {
-      await Axios.post('https://parrotsays-backend.herokuapp.com/rtctoken', {
-        channel: this.state.username,
-        isPublisher: true,
-      }).then((res) =>
+      await Axios.post(
+        'https://cors-anywhere.herokuapp.com/https://parrotsays-backend.herokuapp.com/rtctoken',
+        {
+          channel: this.state.username,
+          isPublisher: true,
+        }
+      ).then((res) =>
         this.setState({ token: res.data.token, uid: res.data.uid })
       );
       console.log(this.state.token);
@@ -114,13 +117,16 @@ class Stream extends Component {
           .catch((err) => console.log(err));
       };
       const stopCloudRecord = async () => {
-        await Axios.post('https://parrotsays-cloud.herokuapp.com/stop', {
-          resource: this.state.resourceId,
-          sid: this.state.sid,
-          mode: 'mix',
-          channel: this.state.channel,
-          uid: `${userid}`,
-        })
+        await Axios.post(
+          'https://cors-anywhere.herokuapp.com/https://parrotsays-cloud.herokuapp.com/stop',
+          {
+            resource: this.state.resourceId,
+            sid: this.state.sid,
+            mode: 'mix',
+            channel: this.state.channel,
+            uid: `${userid}`,
+          }
+        )
           .then((res) => {
             this.setState({
               resourceId: res.data.resourceId,
