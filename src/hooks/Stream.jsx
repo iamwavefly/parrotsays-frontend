@@ -116,8 +116,8 @@ class Stream extends Component {
           })
           .catch((err) => console.log(err));
       };
-      const stopCloudRecord = async () => {
-        await Axios.post(
+      const stopCloudRecord = () => {
+        Axios.post(
           'https://cors-anywhere.herokuapp.com/https://parrotsays-cloud.herokuapp.com/stop',
           {
             resource: this.state.resourceId,

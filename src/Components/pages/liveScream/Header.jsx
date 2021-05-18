@@ -11,7 +11,7 @@ export default class Header extends Component {
         <button id="acquire">Acquire</button>
         <button id="start">Start</button>
         <button id="query">Query</button>
-        <button id="stop">Stop</button>
+        <button id="stop">Stop Stream</button>
       </div>
     );
   }
