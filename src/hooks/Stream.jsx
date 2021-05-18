@@ -82,7 +82,7 @@ class Stream extends Component {
           .catch((err) => console.log(err));
       };
       const startCloudRecord = async () => {
-        await Axios.post('http://localhost:5000/start', {
+        await Axios.post('https://parrotsays-cloud.herokuapp.com/start', {
           channel: this.state.username,
           uid: `${userid}`,
           mode: 'mix',
