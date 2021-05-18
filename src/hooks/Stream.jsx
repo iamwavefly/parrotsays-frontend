@@ -71,6 +71,8 @@ class Stream extends Component {
         await Axios.post('https://parrotsays-cloud.herokuapp.com/acquire', {
           channel: this.state.username,
           uid: `${userid}`,
+          withCredentials: true,
+          credentials: 'include',
         })
           .then((res) => {
             this.setState({ resourceId: res.data.resourceId });
@@ -88,6 +90,8 @@ class Stream extends Component {
           mode: 'mix',
           resource: this.state.resourceId,
           token: this.state.token,
+          withCredentials: true,
+          credentials: 'include',
         })
           .then((res) => {
             this.setState({
@@ -103,6 +107,8 @@ class Stream extends Component {
           resource: this.state.resourceId,
           sid: this.state.sid,
           mode: 'mix',
+          withCredentials: true,
+          credentials: 'include',
         })
           .then((res) => {
             this.setState({
@@ -120,6 +126,8 @@ class Stream extends Component {
           mode: 'mix',
           channel: this.state.channel,
           uid: `${userid}`,
+          withCredentials: true,
+          credentials: 'include',
         })
           .then((res) => {
             this.setState({
