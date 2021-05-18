@@ -44,76 +44,6 @@ class Stream extends Component {
     console.log(this.props.share.share);
     this.setState({ shareScreen: this.props.share.share });
   };
-
-  async cloudRecord(UID) {
-    const userid = Number(UID);
-    const getResourceId = async () => {
-      await Axios.post('http://localhost:5000/acquire', {
-        channel: this.state.username,
-        uid: `${userid}`,
-      })
-        .then((res) => {
-          this.setState({ resourceId: res.data.resourceId });
-          console.log(
-            '-------------------get resource id------------------',
-            res
-          );
-        })
-        .catch((err) => console.log(err));
-    };
-    const startCloudRecord = async () => {
-      await Axios.post('http://localhost:5000/start', {
-        channel: this.state.username,
-        uid: `${userid}`,
-        mode: 'web',
-        resource: this.state.resourceId,
-        token: this.state.token,
-      })
-        .then((res) => {
-          this.setState({ resourceId: res.data.resourceId, sid: res.data.sid });
-          console.log('start-----------------------', res);
-        })
-        .catch((err) => console.log(err));
-    };
-    const queryCloudRecord = async () => {
-      await Axios.post('http://localhost:5000/query', {
-        resource: this.state.resourceId,
-        sid: this.state.sid,
-        mode: 'web',
-      })
-        .then((res) => {
-          this.setState({ resourceId: res.data.resourceId, sid: res.data.sid });
-          console.log('query-----------------------', res);
-        })
-        .catch((err) => console.log(err));
-    };
-    const stopCloudRecord = async () => {
-      await Axios.post('http://localhost:5000/stop', {
-        resource: this.state.resourceId,
-        sid: this.state.sid,
-        mode: 'mix',
-        channel: this.state.channel,
-        uid: `${userid}`,
-      })
-        .then((res) => {
-          this.setState({ resourceId: res.data.resourceId, sid: res.data.sid });
-          console.log('stop-----------------------', res);
-        })
-        .catch((err) => console.log(err));
-    };
-    setTimeout(() => {
-      getResourceId();
-    }, 10000);
-    setTimeout(() => {
-      startCloudRecord();
-    }, 50000);
-    setTimeout(() => {
-      queryCloudRecord();
-    }, 60000);
-    // setTimeout(() => {
-    //   stopCloudRecord();
-    // }, 80000);
-  }
   async componentDidMount() {
     if (this.state.username) {
       await Axios.post('https://parrotsays-backend.herokuapp.com/rtctoken', {
@@ -135,6 +65,92 @@ class Stream extends Component {
       /**
        * Agora Broadcast Client
        */
+
+      const userid = Number(123432);
+      const getResourceId = async () => {
+        await Axios.post('https://parrotsays-cloud.herokuapp.com/acquire', {
+          channel: this.state.username,
+          uid: `${userid}`,
+        })
+          .then((res) => {
+            this.setState({ resourceId: res.data.resourceId });
+            console.log(
+              '-------------------get resource id------------------',
+              res
+            );
+          })
+          .catch((err) => console.log(err));
+      };
+      const startCloudRecord = async () => {
+        await Axios.post('https://parrotsays-cloud.herokuapp.com/start', {
+          channel: this.state.username,
+          uid: `${userid}`,
+          mode: 'mix',
+          resource: this.state.resourceId,
+          token: this.state.token,
+        })
+          .then((res) => {
+            this.setState({
+              resourceId: res.data.resourceId,
+              sid: res.data.sid,
+            });
+            console.log('-------------start----------', res);
+          })
+          .catch((err) => console.log(err));
+      };
+      const queryCloudRecord = async () => {
+        await Axios.post('https://parrotsays-cloud.herokuapp.com/query', {
+          resource: this.state.resourceId,
+          sid: this.state.sid,
+          mode: 'mix',
+        })
+          .then((res) => {
+            this.setState({
+              resourceId: res.data.resourceId,
+              sid: res.data.sid,
+            });
+            console.log('query-----------------------', res);
+          })
+          .catch((err) => console.log(err));
+      };
+      const stopCloudRecord = async () => {
+        await Axios.post('https://parrotsays-cloud.herokuapp.com/stop', {
+          resource: this.state.resourceId,
+          sid: this.state.sid,
+          mode: 'mix',
+          channel: this.state.channel,
+          uid: `${userid}`,
+        })
+          .then((res) => {
+            this.setState({
+              resourceId: res.data.resourceId,
+              sid: res.data.sid,
+            });
+            console.log('stop-----------------------', res);
+          })
+          .catch((err) => console.log(err));
+      };
+      const acquireBtn = document
+        .getElementById('acquire')
+        .addEventListener('click', () => {
+          getResourceId();
+        });
+      const startBtn = document
+        .getElementById('start')
+        .addEventListener('click', () => {
+          startCloudRecord();
+        });
+      const queryBtn = document
+        .getElementById('query')
+        .addEventListener('click', () => {
+          queryCloudRecord();
+        });
+      const stopBtn = document
+        .getElementById('stop')
+        .addEventListener('click', () => {
+          console.log('clicked');
+          stopCloudRecord();
+        });
 
       // Defaults
       let client = AgoraRTC.createClient({ mode: 'live', codec: 'h264' });
@@ -215,7 +231,6 @@ class Stream extends Component {
             localStreams.uid = uid;
             this.setState({ uid: uid });
             localStreams.camera.id = uid;
-            // await this.cloudRecord(uid);
           },
           function (err) {}
         );
@@ -458,11 +473,12 @@ class Stream extends Component {
         }
       });
       endStreamControl.addEventListener('click', async () => {
-        await client.leave(() => {
+        client.leave(() => {
           localStreams.camera.stream.stop();
           localStreams.camera.stream.close();
           client.unpublish(localStreams.camera.stream);
           window.location = 'https://parrotsays.com/';
+          this.stopCloudRecord();
         });
       });
       joinChannel(this.state.username);

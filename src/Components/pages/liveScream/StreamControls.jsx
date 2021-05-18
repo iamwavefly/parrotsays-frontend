@@ -49,6 +49,9 @@ class StreamControls extends Component {
             >
               <MdVideocam className="icon videoIcon" />
             </div>
+            <div id="endStreamControl" className="control endStreamControl">
+              <MdCallEnd className="icon chatIcon" />
+            </div>
             <div
               onClick={this.handleClick}
               id="shareScreenBtn"
@@ -58,9 +61,6 @@ class StreamControls extends Component {
             </div>
             <div onClick={this.handleClick} className="control chatControl">
               <MdForum className="icon chatIcon" />
-            </div>
-            <div id="endStreamControl" className="endStreamControl">
-              <MdCallEnd className="icon chatIcon" />
             </div>
           </div>
         </div>
