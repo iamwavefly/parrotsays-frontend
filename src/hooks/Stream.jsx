@@ -46,13 +46,10 @@ class Stream extends Component {
   };
   async componentDidMount() {
     if (this.state.username) {
-      await Axios.post(
-        'https://parrotsays-backend.herokuapp.com/rtctoken',
-        {
-          channel: this.state.username,
-          isPublisher: true,
-        }
-      ).then((res) =>
+      await Axios.post('https://parrotsays-backend.herokuapp.com/rtctoken', {
+        channel: this.state.username,
+        isPublisher: true,
+      }).then((res) =>
         this.setState({ token: res.data.token, uid: res.data.uid })
       );
       console.log(this.state.token);
@@ -85,16 +82,13 @@ class Stream extends Component {
           .catch((err) => console.log(err));
       };
       const startCloudRecord = async () => {
-        await Axios.post(
-          'http://localhost:5000/start',
-          {
-            channel: this.state.username,
-            uid: `${userid}`,
-            mode: 'mix',
-            resource: this.state.resourceId,
-            token: this.state.token,
-          }
-        )
+        await Axios.post('http://localhost:5000/start', {
+          channel: this.state.username,
+          uid: `${userid}`,
+          mode: 'mix',
+          resource: this.state.resourceId,
+          token: this.state.token,
+        })
           .then((res) => {
             this.setState({
               resourceId: res.data.resourceId,
@@ -120,16 +114,13 @@ class Stream extends Component {
           .catch((err) => console.log(err));
       };
       const stopCloudRecord = () => {
-        Axios.post(
-          'http://localhost:5000/stop',
-          {
-            resource: this.state.resourceId,
-            sid: this.state.sid,
-            mode: 'mix',
-            channel: this.state.channel,
-            uid: `${userid}`,
-          }
-        )
+        Axios.post('https://parrotsays-cloud.herokuapp.com/stop', {
+          resource: this.state.resourceId,
+          sid: this.state.sid,
+          mode: 'mix',
+          channel: this.state.channel,
+          uid: `${userid}`,
+        })
           .then((res) => {
             this.setState({
               resourceId: res.data.resourceId,
