@@ -1,6 +1,7 @@
 {
   "name": "parrotsays",
   "version": "0.1.0",
+  "proxy": "https://parrotsays-cloud.herokuapp.com",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.10",
@@ -12,6 +13,7 @@
     "axios": "^0.21.1",
     "cors": "^2.8.5",
     "eslint-config-react-app": "^6.0.0",
+    "http-proxy-middleware": "^0.19.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-icons": "^4.2.0",

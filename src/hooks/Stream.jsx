@@ -68,7 +68,7 @@ class Stream extends Component {
 
       const userid = Number(123432);
       const getResourceId = async () => {
-        await Axios.post('https://parrotsays-cloud.herokuapp.com/acquire', {
+        await Axios.post('https://parrotsays-cloud.herokuapp.com/api/acquire', {
           channel: this.state.username,
           uid: `${userid}`,
           withCredentials: true,
@@ -84,7 +84,7 @@ class Stream extends Component {
           .catch((err) => console.log(err));
       };
       const startCloudRecord = async () => {
-        await Axios.post('https://parrotsays-cloud.herokuapp.com/start', {
+        await Axios.post('https://parrotsays-cloud.herokuapp.com/api/start', {
           channel: this.state.username,
           uid: `${userid}`,
           mode: 'mix',
@@ -103,7 +103,7 @@ class Stream extends Component {
           .catch((err) => console.log(err));
       };
       const queryCloudRecord = async () => {
-        await Axios.post('https://parrotsays-cloud.herokuapp.com/query', {
+        await Axios.post('https://parrotsays-cloud.herokuapp.com/api/query', {
           resource: this.state.resourceId,
           sid: this.state.sid,
           mode: 'mix',
@@ -120,7 +120,7 @@ class Stream extends Component {
           .catch((err) => console.log(err));
       };
       const stopCloudRecord = async () => {
-        await Axios.post('https://parrotsays-cloud.herokuapp.com/stop', {
+        await Axios.post('https://parrotsays-cloud.herokuapp.com/api/stop', {
           resource: this.state.resourceId,
           sid: this.state.sid,
           mode: 'mix',
