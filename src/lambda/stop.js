@@ -36,7 +36,7 @@ export function handler(event, context, callback) {
 
   const url = `https://api.agora.io/v1/apps/${AppId}/cloud_recording/resourceid/${resource}/sid/${sid}/mode/${mode}/stop`;
 
-  const getResourceId = () => {
+  const stopRecord = () => {
     axios
       .post(
         url,
@@ -56,5 +56,5 @@ export function handler(event, context, callback) {
       });
   };
 
-  event.httpMethod === 'POST' && getResourceId();
+  event.httpMethod === 'POST' && stopRecord();
 }
