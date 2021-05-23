@@ -44,6 +44,7 @@ export function handler(event, context, callback) {
           cname: channel,
           uid: uid,
           clientRequest: {
+            token: token,
             recordingConfig: {
               maxIdleTime: 400,
               streamTypes: 2,
@@ -56,7 +57,7 @@ export function handler(event, context, callback) {
                 fps: 15,
                 mixedVideoLayout: 1,
                 backgroundColor: '#FFFFFF',
-                backgroundImage: 'https://i.ibb.co/98y9ZSN/parrotsays.jpg',
+                // backgroundImage: 'https://i.ibb.co/98y9ZSN/parrotsays.jpg',
               },
             },
             recordingFileConfig: {
