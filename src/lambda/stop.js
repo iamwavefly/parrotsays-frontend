@@ -14,7 +14,7 @@ HEADERS['Access-Control-Allow-Origin'] = '*';
 HEADERS['Vary'] = 'Origin';
 
 export function handler(event, context, callback) {
-  const { channel, uid, resource, mode, token, sid } = JSON.parse(event.body);
+  const { channel, uid, resource, mode, sid } = JSON.parse(event.body);
   console.log('queryStringParameters', event.queryStringParameters);
   const customerKey = 'e88a7b8bdb7446aebd8713f68460546f';
   // Customer secret

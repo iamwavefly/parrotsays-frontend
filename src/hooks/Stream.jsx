@@ -127,9 +127,7 @@ class Stream extends Component {
           sid: this.state.sid,
           mode: 'mix',
           channel: this.state.channel,
-          uid: `${userid}`,
-          withCredentials: true,
-          credentials: 'include',
+          uid: `${userid}`
         })
           .then((res) => {
             this.setState({
