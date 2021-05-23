@@ -50,8 +50,8 @@ export function handler(event, context, callback) {
               channelType: 1,
               videoStreamType: 0,
               transcodingConfig: {
-                height: 360,
-                width: 640,
+                height: 640,
+                width: 360,
                 bitrate: 500,
                 fps: 15,
                 mixedVideoLayout: 1,
