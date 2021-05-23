@@ -64,8 +64,9 @@ class Stream extends Component {
       /**
        * Agora Broadcast Client
        */
-
-      const userid = Number(123499);
+      
+      const randomUserRecordId = Math.floor(Math.random() * 999999) 
+      const userid = Number(randomUserRecordId);
       const getResourceId = async () => {
         await Axios.post('/.netlify/functions/acquire', {
           channel: this.state.username,
