@@ -1,6 +1,6 @@
 [[redirects]]
   from = "/*"
-  to = "/*"
+  to = "/stream/:splat"
   status = 200
 
 [[headers]]
