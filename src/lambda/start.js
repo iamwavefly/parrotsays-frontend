@@ -51,13 +51,13 @@ export function handler(event, context, callback) {
               channelType: 1,
               videoStreamType: 0,
               transcodingConfig: {
-                height: 640,
-                width: 360,
+                height: 360,
+                width: 640,
                 bitrate: 500,
                 fps: 15,
                 mixedVideoLayout: 1,
                 backgroundColor: '#FFFFFF',
-                // backgroundImage: 'https://i.ibb.co/98y9ZSN/parrotsays.jpg',
+                backgroundImage: 'https://i.ibb.co/98y9ZSN/parrotsays.jpg',
               },
             },
             recordingFileConfig: {
