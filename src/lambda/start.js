@@ -44,7 +44,6 @@ export function handler(event, context, callback) {
           cname: channel,
           uid: uid,
           clientRequest: {
-            token: token,
             recordingConfig: {
               maxIdleTime: 400,
               streamTypes: 2,
