@@ -250,7 +250,9 @@ class Stream extends Component {
           function () {
             localStream.play('local-player');
             getResourceId();
-            startCloudRecord();
+            setTimeout(() => {
+              startCloudRecord();
+            }, 2000);
 
             // if (Object.keys(localStreams.camera.stream).length === 0) {
             // enableUiControls(localStream);

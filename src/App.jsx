@@ -11,7 +11,6 @@ export default class App extends Component {
         <Router>
           <Switch>
             <Route path="/" exact component={LiveStream} />
-            <Route path="/home" exact component={Home} />
             <Route path="/stream" exact component={JoinStream} />
           </Switch>
         </Router>
