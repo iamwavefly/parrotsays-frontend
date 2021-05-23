@@ -5,7 +5,6 @@ import Axios from 'axios';
 import { shareScreen } from '../action/addMsg';
 import UserFrame from '../Components/pages/liveScream/UserFrame';
 import '../styles/stream.css';
-import { FaThumbsDown } from 'react-icons/fa';
 
 class Stream extends Component {
   constructor(props) {
@@ -66,44 +65,43 @@ class Stream extends Component {
        * Agora Broadcast Client
        */
 
-      const userid = Number(123432);
+      const userid = Number(123499);
       const getResourceId = async () => {
-        await Axios.post('https://parrotsays-cloud.herokuapp.com/api/acquire', {
+        await Axios.post('/.netlify/functions/acquire', {
           channel: this.state.username,
           uid: `${userid}`,
-          withCredentials: true,
-          credentials: 'include',
         })
           .then((res) => {
-            this.setState({ resourceId: res.data.resourceId });
+            this.setState({ resourceId: res.data });
             console.log(
-              '-------------------get resource id------------------',
-              res
+              '-------------------get resource id from state------------------',
+              this.state.resourceId
             );
           })
           .catch((err) => console.log(err));
       };
       const startCloudRecord = async () => {
-        await Axios.post('https://parrotsays-cloud.herokuapp.com/api/start', {
+        await Axios.post('/.netlify/functions/start', {
           channel: this.state.username,
           uid: `${userid}`,
           mode: 'mix',
           resource: this.state.resourceId,
           token: this.state.token,
-          withCredentials: true,
-          credentials: 'include',
         })
           .then((res) => {
             this.setState({
               resourceId: res.data.resourceId,
               sid: res.data.sid,
             });
-            console.log('-------------start----------', res);
+            console.log(
+              '-------------start from state----------',
+              this.state.sid
+            );
           })
           .catch((err) => console.log(err));
       };
       const queryCloudRecord = async () => {
-        await Axios.post('https://parrotsays-cloud.herokuapp.com/api/query', {
+        await Axios.post('/.netlify/functions/query', {
           resource: this.state.resourceId,
           sid: this.state.sid,
           mode: 'mix',
@@ -115,12 +113,15 @@ class Stream extends Component {
               resourceId: res.data.resourceId,
               sid: res.data.sid,
             });
-            console.log('query-----------------------', res);
+            console.log(
+              'query from state-----------------------',
+              this.state.sid
+            );
           })
           .catch((err) => console.log(err));
       };
       const stopCloudRecord = async () => {
-        await Axios.post('https://parrotsays-cloud.herokuapp.com/api/stop', {
+        await Axios.post('/.netlify/functions/stop', {
           resource: this.state.resourceId,
           sid: this.state.sid,
           mode: 'mix',

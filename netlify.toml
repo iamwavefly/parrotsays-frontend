@@ -1,17 +1,14 @@
 [[redirects]]
-from = "/*"
-to = "/*"
-status = 200
-headers = { Access-Control-Allow-Origin = "*", Authorization = "Bearer api-key"}
+  from = "/*"
+  to = "/*"
+  status = 200
 
 [[headers]]
-for = "/*"
-[headers.values]
-Access-Control-Allow-Origin = "*"
-Authorization = "Bearer api-key"
+  for = "/*"
+  [headers.values]
+  Access-Control-Allow-Origin = "*"
 
-[[headers]]
-for = "/*"
-[headers.values]
-Access-Control-Allow-Origin = "*"
-Authorization = "Bearer api-key"
+[build]
+  command = "npm build" # the command you run to build this file
+  functions = "built-lambda" # netlify-lambda builds to this folder AND Netlify reads functions from here
+  publish = "build" # create-react-app builds to this folder, Netlify should serve all these files statically
