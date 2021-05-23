@@ -64,8 +64,8 @@ class Stream extends Component {
       /**
        * Agora Broadcast Client
        */
-      
-      const randomUserRecordId = Math.floor(Math.random() * 999999) 
+
+      const randomUserRecordId = Math.floor(Math.random() * 999999);
       const userid = Number(randomUserRecordId);
       const getResourceId = async () => {
         await Axios.post('/.netlify/functions/acquire', {
@@ -127,7 +127,7 @@ class Stream extends Component {
           sid: this.state.sid,
           mode: 'mix',
           channel: this.state.channel,
-          uid: `${userid}`
+          uid: `${userid}`,
         })
           .then((res) => {
             this.setState({
@@ -138,15 +138,11 @@ class Stream extends Component {
           })
           .catch((err) => console.log(err));
       };
-      document.getElementById('acquire').addEventListener('click', () => {
-        getResourceId();
-      });
-      document.getElementById('start').addEventListener('click', () => {
-        startCloudRecord();
-      });
-      document.getElementById('query').addEventListener('click', () => {
-        queryCloudRecord();
-      });
+      // document.getElementById('acquire').addEventListener('click', () => {});
+      // document.getElementById('start').addEventListener('click', () => {});
+      // document.getElementById('query').addEventListener('click', () => {
+      // queryCloudRecord();
+      // });
       document.getElementById('stop').addEventListener('click', () => {
         stopCloudRecord();
       });
@@ -253,6 +249,9 @@ class Stream extends Component {
         localStream.init(
           function () {
             localStream.play('local-player');
+            getResourceId();
+            startCloudRecord();
+
             // if (Object.keys(localStreams.camera.stream).length === 0) {
             // enableUiControls(localStream);
             // } else {
