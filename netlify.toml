@@ -7,8 +7,3 @@
   for = "/*"
   [headers.values]
   Access-Control-Allow-Origin = "*"
-
-[build]
-  command = "npm run build"
-  functions = "built-lambda" 
-  publish = "build"
