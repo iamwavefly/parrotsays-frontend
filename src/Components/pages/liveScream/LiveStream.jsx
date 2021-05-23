@@ -1,13 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { Component } from 'react';
-import Axios from 'axios';
 
 import { connect } from 'react-redux';
 import AttendeeFrame from './AttendeeFrame';
 import Stream from '../../../hooks/Stream';
 import Chat from './Chat';
 import Header from './Header';
-import UserFrame from './UserFrame';
 
 import '../../../styles/index.css';
 import StreamControls from './StreamControls';

@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Logo from '../../../img/parrotsays.jpeg';
 
 import '../../../styles/header.css';
 

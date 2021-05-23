@@ -1,4 +1,4 @@
-import React, { Component, useRef } from 'react';
+import React, { Component } from 'react';
 import { FiSmile } from 'react-icons/fi';
 import { FaEye } from 'react-icons/fa';
 import { connect } from 'react-redux';

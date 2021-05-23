@@ -2,14 +2,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 // import Moment from 'react-moment';
 
-import { FiX, FiClock, FiUser } from 'react-icons/fi';
+import { FiX, FiUser } from 'react-icons/fi';
 
 import '../../../styles/attendee.css';
 
 class AttendeeFrame extends Component {
-  constructor(props) {
-    super(props);
-  }
   componentDidMount() {
     console.log(this.props);
   }

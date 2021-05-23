@@ -139,26 +139,18 @@ class Stream extends Component {
           })
           .catch((err) => console.log(err));
       };
-      const acquireBtn = document
-        .getElementById('acquire')
-        .addEventListener('click', () => {
-          getResourceId();
-        });
-      const startBtn = document
-        .getElementById('start')
-        .addEventListener('click', () => {
-          startCloudRecord();
-        });
-      const queryBtn = document
-        .getElementById('query')
-        .addEventListener('click', () => {
-          queryCloudRecord();
-        });
-      const stopBtn = document
-        .getElementById('stop')
-        .addEventListener('click', () => {
-          stopCloudRecord();
-        });
+      document.getElementById('acquire').addEventListener('click', () => {
+        getResourceId();
+      });
+      document.getElementById('start').addEventListener('click', () => {
+        startCloudRecord();
+      });
+      document.getElementById('query').addEventListener('click', () => {
+        queryCloudRecord();
+      });
+      document.getElementById('stop').addEventListener('click', () => {
+        stopCloudRecord();
+      });
 
       // Defaults
       let client = AgoraRTC.createClient({ mode: 'live', codec: 'h264' });
