@@ -9,6 +9,6 @@
   Access-Control-Allow-Origin = "*"
 
 [build]
-  command = "npm run build"
+  command = "npm run build:app"
   functions = "built-lambda" 
   publish = "build"
