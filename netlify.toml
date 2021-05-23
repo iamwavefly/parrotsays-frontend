@@ -7,7 +7,3 @@
   for = "/*"
   [headers.values]
   Access-Control-Allow-Origin = "*"
-
-[build]
-  functions = "built-lambda" 
-  publish = "build"
