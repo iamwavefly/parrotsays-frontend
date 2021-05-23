@@ -138,15 +138,6 @@ class Stream extends Component {
           })
           .catch((err) => console.log(err));
       };
-      // document.getElementById('acquire').addEventListener('click', () => {});
-      // document.getElementById('start').addEventListener('click', () => {});
-      // document.getElementById('query').addEventListener('click', () => {
-      // queryCloudRecord();
-      // });
-      document.getElementById('stop').addEventListener('click', () => {
-        stopCloudRecord();
-      });
-
       // Defaults
       let client = AgoraRTC.createClient({ mode: 'live', codec: 'h264' });
       let screenClient = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' });
@@ -225,6 +216,10 @@ class Stream extends Component {
             createCameraStream(uid, {});
             localStreams.uid = uid;
             this.setState({ uid: uid });
+            getResourceId();
+            setTimeout(() => {
+              startCloudRecord();
+            }, 5000);
             localStreams.camera.id = uid;
           },
           function (err) {}
@@ -249,11 +244,6 @@ class Stream extends Component {
         localStream.init(
           function () {
             localStream.play('local-player');
-            getResourceId();
-            setTimeout(() => {
-              startCloudRecord();
-            }, 2000);
-
             // if (Object.keys(localStreams.camera.stream).length === 0) {
             // enableUiControls(localStream);
             // } else {
@@ -478,7 +468,7 @@ class Stream extends Component {
           localStreams.camera.stream.close();
           client.unpublish(localStreams.camera.stream);
           window.location = 'https://parrotsays.com/';
-          this.stopCloudRecord();
+          stopCloudRecord();
         });
       });
       joinChannel(this.state.username);
