@@ -18,8 +18,8 @@ class Chat extends Component {
       users: [],
       text: '',
       sound: new Audio(msgNotif),
-      username: params?.get('username'),
-      channel: params?.get('user_id'),
+      username: params && params.get('username'),
+      channel: params && params.get('user_id'),
     };
     this.handleOnEnter = this.handleOnEnter.bind(this);
     this.initChat = this.initChat.bind(this);
