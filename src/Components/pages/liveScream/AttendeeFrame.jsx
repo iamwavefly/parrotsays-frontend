@@ -18,21 +18,22 @@ class AttendeeFrame extends Component {
           <FiX onClick={this.handleClick} className="rmIcon" />
         </div>
         <div className="usersContainer">
-          {this.props.users.users?.users.map((user) => {
-            return (
-              <div className="user">
-                {/* <div className="locat">*</div> */}
-                <div className="name">
-                  <FiUser className="icon user_icon" />
-                  <span>{user}</span>
-                </div>
-                {/* <div className="timestamp">
+          {this.props.users.users &&
+            this.props.users.users.users.map((user) => {
+              return (
+                <div className="user">
+                  {/* <div className="locat">*</div> */}
+                  <div className="name">
+                    <FiUser className="icon user_icon" />
+                    <span>{user}</span>
+                  </div>
+                  {/* <div className="timestamp">
                   <FiClock className="icon time_icon" />
                   <span>{<Moment toNow>{Date.now()}</Moment>}</span>
                 </div> */}
-              </div>
-            );
-          })}
+                </div>
+              );
+            })}
         </div>
       </div>
     );
