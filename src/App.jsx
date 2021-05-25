@@ -11,8 +11,8 @@ export default class App extends Component {
         <Router>
           <Switch>
             <Route path="/" exact component={LiveStream} />
-            <Route path="/playback" exact component={StreamPlayBack} />
-            <Route path="/stream" exact component={JoinStream} />
+            <Route path="/playback" component={StreamPlayBack} />
+            <Route path="/stream" component={JoinStream} />
           </Switch>
         </Router>
       </div>
