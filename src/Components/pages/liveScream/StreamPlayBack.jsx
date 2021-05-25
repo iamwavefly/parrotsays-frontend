@@ -28,7 +28,8 @@ export default class StreamPlayBack extends Component {
       const res = response.Contents.filter((key) => {
         return key.Key.endsWith('.m3u8');
       });
-      this.setState({ videoObjectKeys: res });
+      const revArr = res.reverse();
+      this.setState({ videoObjectKeys: revArr });
     } catch (error) {
       console.error(error);
     }
