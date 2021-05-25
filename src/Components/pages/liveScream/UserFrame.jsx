@@ -27,7 +27,9 @@ class UserFrame extends Component {
             </div>
             <div className="activeUserBadge">
               <FaEye className="activeIcon" />
-              <span>{this.props.users.users?.users.length}</span>
+              <span>
+                {this.props.users.users && this.props.users.users.users.length}
+              </span>
             </div>
           </div>
           <FiSmile className="frameIcon" />

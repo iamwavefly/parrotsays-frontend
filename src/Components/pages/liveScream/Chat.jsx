@@ -39,8 +39,8 @@ class Chat extends Component {
   params = new URLSearchParams(window.location.search);
   channelUrl =
     window.location.pathname === '/stream/'
-      ? this.params?.get('channel')
-      : this.params?.get('username');
+      ? this.params && this.params.get('channel')
+      : this.params && this.params.get('username');
   channel = this.client.createChannel(this.channelUrl);
   async initChat() {
     const getChannelMsg = (msg, user) => {
