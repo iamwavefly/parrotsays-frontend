@@ -1,6 +1,6 @@
 [[redirects]]
   from = "/*"
-  to = "/stream/*"
+  to = "/index.html"
   status = 200
 
 [[headers]]

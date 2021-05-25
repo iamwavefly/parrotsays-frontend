@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import LiveStream from './Components/pages/liveScream/LiveStream';
 import JoinStream from './Components/pages/liveScream/JoinStream';
-import Home from './Components/pages/Home';
+import StreamPlayBack from './Components/pages/liveScream/StreamPlayBack';
 
 export default class App extends Component {
   render() {
@@ -11,6 +11,7 @@ export default class App extends Component {
         <Router>
           <Switch>
             <Route path="/" exact component={LiveStream} />
+            <Route path="/playback" exact component={StreamPlayBack} />
             <Route path="/stream" exact component={JoinStream} />
           </Switch>
         </Router>
