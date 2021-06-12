@@ -3,7 +3,7 @@ import { updateUsers } from '../../../action/addMsg';
 import { connect } from 'react-redux';
 import { FiX } from 'react-icons/fi';
 import Axios from 'axios';
-import InputEmoji from 'react-input-emoji';
+// import InputEmoji from 'react-input-emoji';
 import AgoraRTM from 'agora-rtm-sdk';
 
 import msgNotif from '../../../assets/sound/chat-notification.mp3';
@@ -159,7 +159,7 @@ class Chat extends Component {
             }}
           ></div>
         </div>
-        <InputEmoji
+        <input
           name="msg"
           autoFocus="true"
           className="msgInput"

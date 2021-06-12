@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Skeleton from 'react-loading-skeleton';
 import Player from 'react-hls-player';
 import aws from 'aws-sdk';
 import '../../../styles/streamplayback.css';
@@ -44,16 +45,18 @@ export default class StreamPlayBack extends Component {
           {this.state.videoObjectKeys.length > 0 &&
             this.state.videoObjectKeys.slice(0, 10).map((keys) => {
               return (
-                <Player
-                  src={
-                    'https://parrotrelease.s3.eu-west-2.amazonaws.com/' +
-                    keys.Key
-                  }
-                  autoPlay={false}
-                  controls={true}
-                  width="100%"
-                  height="auto"
-                />
+                (
+                  <Player
+                    src={
+                      'https://parrotrelease.s3.eu-west-2.amazonaws.com/' +
+                      keys.Key
+                    }
+                    autoPlay={false}
+                    controls={true}
+                    width="100%"
+                    height="auto"
+                  />
+                ) || <Skeleton duration={10} />
               );
             })}
         </div>

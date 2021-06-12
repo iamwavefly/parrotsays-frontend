@@ -1,0 +1,4 @@
+.mainHeaderContainer {
+  display: flex;
+  flex-direction: column;
+}

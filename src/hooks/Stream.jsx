@@ -337,10 +337,11 @@ class Stream extends Component {
         });
       };
       const stopScreenShare = () => {
-        localStreams.screen.stream?.disableVideo(); // disable the local video stream (will send a mute signal)
-        localStreams.screen.stream?.stop(); // stop playing the local stream
-        localStreams.camera.stream?.enableVideo(); // enable the camera feed
-        localStreams.camera.stream?.play('local-player'); // play the camera within the full-screen-video div
+        localStreams.screen.stream && localStreams.screen.stream.disableVideo(); // disable the local video stream (will send a mute signal)
+        localStreams.screen.stream && localStreams.screen.stream.stop(); // stop playing the local stream
+        localStreams.camera.stream && localStreams.screen.stream.enableVideo(); // enable the camera feed
+        localStreams.camera.stream &&
+          localStreams.screen.stream.play('local-player'); // play the camera within the full-screen-video div
         // $("#video-btn").prop("disabled",false);
         screenClient.leave(
           () => {
