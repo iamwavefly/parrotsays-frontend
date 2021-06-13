@@ -34,7 +34,7 @@ const List = styled.li`
 const NavLink = styled.a`
   color: #f1f1f1;
   text-decoration: none;
-  font-size: 14px;
+  font-size: 12px;
   text-transform: uppercase;
   opacity: 1;
   transition: all 0.4s ease;
