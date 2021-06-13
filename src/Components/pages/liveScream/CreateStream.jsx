@@ -42,7 +42,7 @@ export default class CreateStream extends Component {
   }
   async createStream() {
     const stream = await Axios.post(
-      'http://localhost:4000/stream/new',
+      'https://parrotsays-backend.herokuapp.com/stream/new',
       this.state
     );
     console.log(stream);
